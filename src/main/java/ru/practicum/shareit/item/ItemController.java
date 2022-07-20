@@ -24,33 +24,29 @@ public class ItemController {
 
     @PostMapping
     public @Valid Item create(@Valid @RequestBody final Item item, HttpServletResponse response, BindingResult result) {
-        if(item.getId() == 0) item.setId(ItemStorage.getMaxId());
+        if (item.getId() == 0) item.setId(ItemStorage.getMaxId());
         ItemStorage.addItem(item);
         return item;
     }
 
-    @PutMapping
-    public @Valid void  put(@Valid @RequestBody final Item item, HttpServletResponse response, BindingResult result) {
-        if(ItemStorage.getItem(item.getId()).isPresent()){
-            update(item,response,result);
-        }
-        else create(item,response,result);
-    }
-
-    @PatchMapping
+    @PatchMapping("/{itemId}")
     public @Valid Item update(@Valid @RequestBody final Item item, HttpServletResponse response, BindingResult result) {
         ItemStorage.update(item);
         return item;
     }
 
-    @DeleteMapping("/{id}")
-    public Optional<Item> remove(@PathVariable("id") int id, HttpServletResponse response) {
-        ItemStorage.deleteItem(id);
+    @GetMapping("/{id}")
+    public Optional<Item> getItemDtoById(@PathVariable("id") int id, HttpServletResponse response) {
         return ItemStorage.getItem(id);
     }
 
-    @GetMapping("/{id}")
-    public Optional<Item> getById(@PathVariable("id") int id, HttpServletResponse response) {
+    @GetMapping
+    public Optional<Item> getItemsByOwnerById(@PathVariable("id") int id, HttpServletResponse response) {
+        return ItemStorage.getItem(id);
+    }
+
+    @GetMapping("search?text={text}")
+    public Optional<Item> search(@PathVariable("id") int id, HttpServletResponse response) {
         return ItemStorage.getItem(id);
     }
 

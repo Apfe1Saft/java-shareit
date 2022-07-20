@@ -8,13 +8,11 @@ import java.util.Set;
 
 public class ItemStorage {
     private static Set<Item> items = new HashSet<>();
+    private static int maxId = 0;
 
     public static int getMaxId() {
-        int max = 0;
-        for (Item item : getItems()) {
-            if (item.getId() > max) max = item.getId();
-        }
-        return max + 1;
+        maxId++;
+        return maxId;
     }
 
     public static Set<Item> getItems() {

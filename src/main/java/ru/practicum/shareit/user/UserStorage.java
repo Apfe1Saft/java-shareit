@@ -1,20 +1,22 @@
 package ru.practicum.shareit.user;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.practicum.shareit.item.model.Item;
 
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
+import ru.practicum.shareit.exception.*;
+
 public class UserStorage {
     private static Set<User> users = new HashSet<>();
+    private static int maxId = 0;
 
     public static int getMaxId() {
-        int max = 0;
-        for (User user : getUsers()) {
-            if (user.getId() > max) max = user.getId();
-        }
-        return max + 1;
+        maxId++;
+        return maxId;
     }
 
     public static boolean isEmailExist(String email) {
@@ -45,8 +47,21 @@ public class UserStorage {
         getUsers().removeIf(user -> user.getId() == userId);
     }
 
-    public static void update(User user) {
+    public static User update(User user) {
+        if(getUser(user.getId()).isPresent()) {
+            if (isEmailExist(user.getEmail()) & !getUser(user.getId()).get().getEmail().equals(user.getEmail())){
+                throw new NullParamException("");
+            }
+        }
+        if(getUser(user.getId()).isPresent()) {
+            User updatedUser = getUser(user.getId()).get();
+            if(user.getName()!=null) updatedUser.setName(user.getName());
+            if(user.getEmail()!=null) updatedUser.setEmail(user.getEmail());
+            user = updatedUser;
+
+        }
         deleteUser(user.getId());
         addUser(user);
+        return user;
     }
 }
