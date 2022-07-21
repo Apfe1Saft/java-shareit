@@ -20,14 +20,20 @@ public class ErrorHandler {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public Map<String, String> handleEmailException(final EmailException e) {
-        return Map.of("error", "Произошла ошибка! EmailException");
+    public Map<String, String> handleWrongDataException(final WrongDataException e) {
+        return Map.of("error", "Произошла ошибка! WrongDataException");
     }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.CONFLICT)
     public Map<String, String> handleNullParamException(final NullParamException e) {
         return Map.of("error", "Произошла ошибка! NullParamException");
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public Map<String, String> handleNotFoundException(final NotFoundException e) {
+        return Map.of("error", "Произошла ошибка! NotFoundException");
     }
 
 

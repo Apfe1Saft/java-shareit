@@ -1,14 +1,17 @@
 package ru.practicum.shareit.item.service;
 
+import org.springframework.stereotype.Service;
+import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
 
 import java.util.Set;
 
+@Service
 public interface ItemService {
-    void addItem(Item item);
-    void updateItem(Item item);
-    Item getItemDtoById(int itemId);
-    Item getItemByOwnerById(int itemId);
-    Set<Item> searchItems(String text);
+    Item addItem(Item item);
+    Item updateItem(Item item);
+    ItemDto getItemDtoById(int itemId);
+    Set<ItemDto> searchItems(String text);
+    Set<ItemDto> show(int id);
 
 }

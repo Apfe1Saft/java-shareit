@@ -27,7 +27,7 @@ public class UserController {
 
     @PostMapping
     public @Valid User create(@Valid @RequestBody final User user, HttpServletResponse response, BindingResult result) {
-        if (user.getEmail() == null) throw new EmailException("");
+        if (user.getEmail() == null) throw new WrongDataException("");
         userChecker(user);
         UserStorage.addUser(user);
         return user;
@@ -61,7 +61,7 @@ public class UserController {
         if (user.getName() == null) throw new NullParamException("");
         if (UserStorage.isEmailExist(user.getEmail())) throw new ValidationException("");
         if(user.getEmail()!=null) {
-            if (!user.getEmail().contains("@")) throw new EmailException("");
+            if (!user.getEmail().contains("@")) throw new WrongDataException("");
         }
         if (user.getId() == 0) user.setId(UserStorage.getMaxId());
     }

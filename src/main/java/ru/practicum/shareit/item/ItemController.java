@@ -2,13 +2,14 @@ package ru.practicum.shareit.item;
 
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.shareit.item.model.Item;
-import ru.practicum.shareit.user.User;
-import ru.practicum.shareit.user.UserStorage;
+import ru.practicum.shareit.exception.NotFoundException;
+import ru.practicum.shareit.exception.WrongDataException;
+import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.service.ItemService;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
-import java.util.Optional;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -17,37 +18,50 @@ import java.util.Set;
 @RestController
 @RequestMapping("/items")
 public class ItemController {
-    @GetMapping
-    public Set<Item> show() {
-        return ItemStorage.getItems();
+    private ItemService service;
+
+    public ItemController(ItemService service) {
+        this.service = service;
     }
 
     @PostMapping
-    public @Valid Item create(@Valid @RequestBody final Item item, HttpServletResponse response, BindingResult result) {
-        if (item.getId() == 0) item.setId(ItemStorage.getMaxId());
-        ItemStorage.addItem(item);
-        return item;
-    }
-
-    @PatchMapping("/{itemId}")
-    public @Valid Item update(@Valid @RequestBody final Item item, HttpServletResponse response, BindingResult result) {
-        ItemStorage.update(item);
-        return item;
-    }
-
-    @GetMapping("/{id}")
-    public Optional<Item> getItemDtoById(@PathVariable("id") int id, HttpServletResponse response) {
-        return ItemStorage.getItem(id);
+    public @Valid ItemDto create(@RequestHeader("X-Sharer-User-Id") String ownerId,
+                              @Valid @RequestBody final ItemDto itemDto, HttpServletResponse response, BindingResult result) {
+        if(itemDto.getName()==null ) throw new NotFoundException("");
+        if(itemDto.getName().equals("") | itemDto.getDescription()==null) throw new WrongDataException("");
+        return ItemMapper.toItemDto(service.addItem(ItemMapper.toItem(itemDto, Integer.parseInt(ownerId))));
     }
 
     @GetMapping
-    public Optional<Item> getItemsByOwnerById(@PathVariable("id") int id, HttpServletResponse response) {
-        return ItemStorage.getItem(id);
+    public @Valid Set<ItemDto> show(@RequestHeader("X-Sharer-User-Id") String ownerId) {
+        return service.show(Integer.parseInt(ownerId));
     }
 
-    @GetMapping("search?text={text}")
-    public Optional<Item> search(@PathVariable("id") int id, HttpServletResponse response) {
-        return ItemStorage.getItem(id);
+    @PatchMapping("/{itemId}")
+    public @Valid ItemDto update(@PathVariable("itemId") int itemId,
+                                 @RequestHeader("X-Sharer-User-Id") String ownerId,
+                                 @Valid @RequestBody final ItemDto itemDto, HttpServletResponse response, BindingResult result) {
+        if(Integer.parseInt(ownerId) == Objects.requireNonNull(ItemStorage.getItem(itemId)).getOwner().getId()) {
+            if(itemDto.isAvailable() == null) {
+                itemDto.setAvailable(ItemStorage.getItem(itemId).getAvailable());
+            }
+            itemDto.setId(itemId);
+            return ItemMapper.toItemDto(service.updateItem(ItemMapper.toItem(itemDto, Integer.parseInt(ownerId))));
+        }
+        throw new NotFoundException("");
+    }
+
+    @GetMapping("/{id}")
+    public ItemDto getItemDtoById(@PathVariable("id") int id,
+                                  HttpServletResponse response) {
+        return service.getItemDtoById(id);
+    }
+
+    @GetMapping("/search?text={text}")
+    public Set<ItemDto> search(@PathVariable("text") String  text, HttpServletResponse response) {
+        System.out.println(text);
+        //return service.searchItems(text);
+        return null;
     }
 
 }
