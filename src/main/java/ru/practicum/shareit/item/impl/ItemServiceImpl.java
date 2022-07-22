@@ -7,9 +7,8 @@ import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.service.ItemService;
 import ru.practicum.shareit.item.model.Item;
 
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Stream;
 
 @Component
 public class ItemServiceImpl implements ItemService {
@@ -33,19 +32,24 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public Set<ItemDto> searchItems(String text) {
+    public Stream<ItemDto> searchItems(String text) {
+
         Set<Item> answerItems = new HashSet<>();
+
         for(Item item: ItemStorage.getItems()){
-            if(item.getName().contains(text) || item.getDescription().contains(text)){
+            if(item.getName().toUpperCase(Locale.ROOT).contains(text.toUpperCase(Locale.ROOT)) ||
+                    item.getDescription().toUpperCase(Locale.ROOT).contains(text.toUpperCase(Locale.ROOT))){
                 answerItems.add(item);
             }
         }
         Set<ItemDto> answer = new HashSet<>();
+        if(text.equals(""))
+            return answer.stream();
         for(Item item : answerItems){
             answer.add(ItemMapper.toItemDto(item));
         }
 
-        return answer;
+        return answer.stream().sorted(Comparator.comparing(ItemDto::getId)).filter(ItemDto::isAvailable);
     }
 
     @Override

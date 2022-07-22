@@ -5,13 +5,14 @@ import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
 
 import java.util.Set;
+import java.util.stream.Stream;
 
 @Service
 public interface ItemService {
     Item addItem(Item item);
     Item updateItem(Item item);
     ItemDto getItemDtoById(int itemId);
-    Set<ItemDto> searchItems(String text);
+    Stream<ItemDto> searchItems(String text);
     Set<ItemDto> show(int id);
 
 }

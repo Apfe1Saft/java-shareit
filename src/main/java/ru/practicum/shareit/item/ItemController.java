@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Stream;
 
 /**
  * // TODO .
@@ -57,11 +58,9 @@ public class ItemController {
         return service.getItemDtoById(id);
     }
 
-    @GetMapping("/search?text={text}")
-    public Set<ItemDto> search(@PathVariable("text") String  text, HttpServletResponse response) {
-        System.out.println(text);
-        //return service.searchItems(text);
-        return null;
+    @GetMapping("/search")
+    public Stream<ItemDto> search(@RequestParam("text") String  text, HttpServletResponse response) {
+        return service.searchItems(text);
     }
 
 }
