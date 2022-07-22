@@ -1,9 +1,5 @@
 package ru.practicum.shareit.user;
 
-import lombok.Getter;
-import lombok.Setter;
-import ru.practicum.shareit.item.model.Item;
-
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -48,15 +44,15 @@ public class UserStorage {
     }
 
     public static User update(User user) {
-        if(getUser(user.getId()).isPresent()) {
-            if (isEmailExist(user.getEmail()) & !getUser(user.getId()).get().getEmail().equals(user.getEmail())){
+        if (getUser(user.getId()).isPresent()) {
+            if (isEmailExist(user.getEmail()) & !getUser(user.getId()).get().getEmail().equals(user.getEmail())) {
                 throw new NullParamException("");
             }
         }
-        if(getUser(user.getId()).isPresent()) {
+        if (getUser(user.getId()).isPresent()) {
             User updatedUser = getUser(user.getId()).get();
-            if(user.getName()!=null) updatedUser.setName(user.getName());
-            if(user.getEmail()!=null) updatedUser.setEmail(user.getEmail());
+            if (user.getName() != null) updatedUser.setName(user.getName());
+            if (user.getEmail() != null) updatedUser.setEmail(user.getEmail());
             user = updatedUser;
 
         }

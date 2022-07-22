@@ -57,10 +57,10 @@ public class UserController {
         return UserStorage.getUser(id);
     }
 
-    public void userChecker(User user){
+    public void userChecker(User user) {
         if (user.getName() == null) throw new NullParamException("");
         if (UserStorage.isEmailExist(user.getEmail())) throw new ValidationException("");
-        if(user.getEmail()!=null) {
+        if (user.getEmail() != null) {
             if (!user.getEmail().contains("@")) throw new WrongDataException("");
         }
         if (user.getId() == 0) user.setId(UserStorage.getMaxId());
