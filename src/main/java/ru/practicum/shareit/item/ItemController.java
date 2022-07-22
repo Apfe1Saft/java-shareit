@@ -27,9 +27,9 @@ public class ItemController {
 
     @PostMapping
     public @Valid ItemDto create(@RequestHeader("X-Sharer-User-Id") String ownerId,
-                              @Valid @RequestBody final ItemDto itemDto, HttpServletResponse response, BindingResult result) {
-        if(itemDto.getName()==null ) throw new NotFoundException("");
-        if(itemDto.getName().equals("") | itemDto.getDescription()==null) throw new WrongDataException("");
+                                 @Valid @RequestBody final ItemDto itemDto, HttpServletResponse response, BindingResult result) {
+        if (itemDto.getName() == null) throw new NotFoundException("");
+        if (itemDto.getName().equals("") | itemDto.getDescription() == null) throw new WrongDataException("");
         return ItemMapper.toItemDto(service.addItem(ItemMapper.toItem(itemDto, Integer.parseInt(ownerId))));
     }
 
@@ -42,8 +42,8 @@ public class ItemController {
     public @Valid ItemDto update(@PathVariable("itemId") int itemId,
                                  @RequestHeader("X-Sharer-User-Id") String ownerId,
                                  @Valid @RequestBody final ItemDto itemDto, HttpServletResponse response, BindingResult result) {
-        if(Integer.parseInt(ownerId) == Objects.requireNonNull(ItemStorage.getItem(itemId)).getOwner().getId()) {
-            if(itemDto.isAvailable() == null) {
+        if (Integer.parseInt(ownerId) == Objects.requireNonNull(ItemStorage.getItem(itemId)).getOwner().getId()) {
+            if (itemDto.isAvailable() == null) {
                 itemDto.setAvailable(ItemStorage.getItem(itemId).getAvailable());
             }
             itemDto.setId(itemId);
@@ -59,7 +59,7 @@ public class ItemController {
     }
 
     @GetMapping("/search")
-    public Stream<ItemDto> search(@RequestParam("text") String  text, HttpServletResponse response) {
+    public Stream<ItemDto> search(@RequestParam("text") String text, HttpServletResponse response) {
         return service.searchItems(text);
     }
 

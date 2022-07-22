@@ -11,14 +11,11 @@ import java.time.LocalDate;
  */
 @Data
 public class Booking {
-    int id;// — уникальный идентификатор бронирования;
-    LocalDate start;// — дата начала бронирования;
-    LocalDate end;// — дата конца бронирования;
-    ItemRequest item;// — вещь, которую пользователь бронирует;
-    User booker;// — пользователь, который осуществляет бронирование;
-    Status status;// — статус бронирования. Может принимать одно из следующих
-    //значений: WAITING — новое бронирование, ожидает одобрения, APPROVED
-    //бронирование подтверждено владельцем, REJECTED — бронирование
-    //отклонено владельцем, CANCELED — бронирование отменено создателем.
+    int id;
+    LocalDate start;
+    LocalDate end;
+    ItemRequest item;
+    User booker;
+    Status status;
 
 }

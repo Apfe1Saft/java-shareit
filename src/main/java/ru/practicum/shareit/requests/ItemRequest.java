@@ -10,9 +10,9 @@ import java.time.LocalDate;
  */
 @Data
 public class ItemRequest {
-    int id;// — уникальный идентификатор запроса;
-    String description;// — текст запроса, содержащий описание требуемой вещи;
-    User requestor;// — пользователь, создавший запрос;
-    LocalDate created;// — дата и время создания запроса.
+    int id;
+    String description;
+    User requestor;
+    LocalDate created;
 
 }

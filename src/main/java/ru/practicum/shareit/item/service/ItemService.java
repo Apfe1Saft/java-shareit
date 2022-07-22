@@ -10,9 +10,13 @@ import java.util.stream.Stream;
 @Service
 public interface ItemService {
     Item addItem(Item item);
+
     Item updateItem(Item item);
+
     ItemDto getItemDtoById(int itemId);
+
     Stream<ItemDto> searchItems(String text);
+
     Set<ItemDto> show(int id);
 
 }

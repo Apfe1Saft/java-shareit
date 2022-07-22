@@ -1,13 +1,11 @@
 package ru.practicum.shareit.item.model;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
+
 import lombok.Data;
 import ru.practicum.shareit.requests.ItemRequest;
 import ru.practicum.shareit.user.User;
 
 import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
 
 /**
  * // TODO .
@@ -16,17 +14,15 @@ import javax.validation.constraints.NotNull;
 
 public class Item {
     @Min(0)
-    private int id;//— уникальный идентификатор вещи;
-    private String name;// — краткое название;
-    private String description;// — развёрнутое описание;
-    //@JsonProperty(value = "available")
-    //@JsonInclude(JsonInclude.Include.NON_NULL)
+    private int id;
+    private String name;
+    private String description;
 
-    private Boolean available;// — статус о том, доступна или нет вещь для аренды;
-    private User owner;// — владелец вещи;
-    private ItemRequest request;// — если вещь была создана по запросу другого пользователя, то в этом
+    private Boolean available;
+    private User owner;
+    private ItemRequest request;
 
-    public Item( int id,String name, String description, boolean available, User owner) {
+    public Item(int id, String name, String description, boolean available, User owner) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -38,5 +34,4 @@ public class Item {
         return available;
     }
 
-    //поле будет храниться ссылка на соответствующий запрос.
 }

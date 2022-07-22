@@ -25,7 +25,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public ItemDto getItemDtoById(int itemId) {
-        if(ItemStorage.getItem(itemId)!=null) {
+        if (ItemStorage.getItem(itemId) != null) {
             return ItemMapper.toItemDto(ItemStorage.getItem(itemId));
         }
         return null;
@@ -36,16 +36,16 @@ public class ItemServiceImpl implements ItemService {
 
         Set<Item> answerItems = new HashSet<>();
 
-        for(Item item: ItemStorage.getItems()){
-            if(item.getName().toUpperCase(Locale.ROOT).contains(text.toUpperCase(Locale.ROOT)) ||
-                    item.getDescription().toUpperCase(Locale.ROOT).contains(text.toUpperCase(Locale.ROOT))){
+        for (Item item : ItemStorage.getItems()) {
+            if (item.getName().toUpperCase(Locale.ROOT).contains(text.toUpperCase(Locale.ROOT)) ||
+                    item.getDescription().toUpperCase(Locale.ROOT).contains(text.toUpperCase(Locale.ROOT))) {
                 answerItems.add(item);
             }
         }
         Set<ItemDto> answer = new HashSet<>();
-        if(text.equals(""))
+        if (text.equals(""))
             return answer.stream();
-        for(Item item : answerItems){
+        for (Item item : answerItems) {
             answer.add(ItemMapper.toItemDto(item));
         }
 
@@ -55,8 +55,8 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public Set<ItemDto> show(int id) {
         Set<ItemDto> answer = new HashSet<>();
-        for(Item item : ItemStorage.getItems()){
-            if(item.getOwner().getId() == id) {
+        for (Item item : ItemStorage.getItems()) {
+            if (item.getOwner().getId() == id) {
                 answer.add(ItemMapper.toItemDto(item));
             }
         }
