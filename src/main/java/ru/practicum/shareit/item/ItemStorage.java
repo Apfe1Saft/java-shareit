@@ -21,10 +21,10 @@ public class ItemStorage {
     }
 
     public static Item getItem(int itemId) {
-        if (getItems().stream().anyMatch(item -> item.getId() == itemId)) {
-            return getItems().stream().filter(item -> item.getId() == itemId).findFirst().get();
-        }
-        return null;
+        return getItems().stream()
+                .filter(item -> item.getId() == itemId)
+                .findAny()
+                .orElse(null);
     }
 
     private static void setItems(Set<Item> items) {
