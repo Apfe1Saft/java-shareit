@@ -4,6 +4,8 @@ import lombok.Data;
 import ru.practicum.shareit.requests.ItemRequest;
 import ru.practicum.shareit.user.User;
 
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import java.time.LocalDate;
 
 /**
@@ -16,6 +18,7 @@ public class Booking {
     private LocalDate end;
     private ItemRequest item;
     private User booker;
+    @Enumerated(EnumType.STRING)
     private Status status;
 
 }
