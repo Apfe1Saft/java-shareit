@@ -12,6 +12,8 @@ import java.time.LocalDate;
  * // TODO .
  */
 @Data
+@Entity
+@Table(name = "bookings")
 public class Booking {
     @Column(name = "booking_id")
     private int id;

@@ -7,6 +7,5 @@ import ru.practicum.shareit.user.UserService;
 
 @Component
 @RequiredArgsConstructor
-public class UserServiceImpl implements UserService {
-    private final UserRepository repository;
+public class UserServiceImpl {
 }

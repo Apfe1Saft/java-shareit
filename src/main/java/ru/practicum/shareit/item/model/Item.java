@@ -13,7 +13,8 @@ import javax.validation.constraints.Min;
  * // TODO .
  */
 @Data
-//@Entity
+@Entity
+@Table(name = "items")
 public class Item {
     @Min(0)
     @Id

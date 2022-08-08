@@ -15,7 +15,7 @@ import java.util.List;
  */
 @Data
 @Entity
-@Table(name = "request")
+@Table(name = "requests")
 public class ItemRequest {
     @Id
     @Column(name = "request_id")
