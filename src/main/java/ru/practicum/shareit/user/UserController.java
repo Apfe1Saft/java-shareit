@@ -1,5 +1,6 @@
 package ru.practicum.shareit.user;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
@@ -7,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -17,12 +19,14 @@ import ru.practicum.shareit.exception.*;
  */
 @Validated
 @RestController
+@RequiredArgsConstructor
 @RequestMapping(path = "/users")
 @Slf4j
 public class UserController {
+    private final UserService userService;
     @GetMapping
-    public Set<User> show() {
-        return UserStorage.getUsers();
+    public List<User> show() {
+        return userService.getUsers();
     }
 
     @PostMapping
@@ -35,8 +39,8 @@ public class UserController {
 
     @PutMapping
     public @Valid User put(@Valid @RequestBody final User user, HttpServletResponse response, BindingResult result) {
-        if (UserStorage.getUser(user.getId()).isPresent()) {
-            return update(user.getId(), user, response, result);
+        if (UserStorage.getUser((int) user.getId()).isPresent()) {
+            return update((int) user.getId(), user, response, result);
         } else return create(user, response, result);
     }
 

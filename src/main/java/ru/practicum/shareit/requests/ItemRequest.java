@@ -2,11 +2,10 @@ package ru.practicum.shareit.requests;
 
 import lombok.Data;
 import ru.practicum.shareit.booking.Booking;
-import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.item.Item;
 import ru.practicum.shareit.user.User;
 
 import javax.persistence.*;
-import java.awt.print.Book;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -19,7 +18,7 @@ import java.util.List;
 public class ItemRequest {
     @Id
     @Column(name = "request_id")
-    private int id;
+    private long id;
     @Column(name = "request_description")
     private String description;
 
@@ -30,10 +29,10 @@ public class ItemRequest {
     @Column(name = "request_created")
     private LocalDate created;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "bookings")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "request")
     private List<Booking> bookings;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "items")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "request")
     private List<Item> items;
 
 }

@@ -44,19 +44,19 @@ public class UserStorage {
     }
 
     public static User update(User user) {
-        if (getUser(user.getId()).isPresent()) {
-            if (isEmailExist(user.getEmail()) & !getUser(user.getId()).get().getEmail().equals(user.getEmail())) {
+        if (getUser((int) user.getId()).isPresent()) {
+            if (isEmailExist(user.getEmail()) & !getUser((int) user.getId()).get().getEmail().equals(user.getEmail())) {
                 throw new NullParamException("");
             }
         }
-        if (getUser(user.getId()).isPresent()) {
-            User updatedUser = getUser(user.getId()).get();
+        if (getUser((int) user.getId()).isPresent()) {
+            User updatedUser = getUser((int) user.getId()).get();
             if (user.getName() != null) updatedUser.setName(user.getName());
             if (user.getEmail() != null) updatedUser.setEmail(user.getEmail());
             user = updatedUser;
 
         }
-        deleteUser(user.getId());
+        deleteUser((int) user.getId());
         addUser(user);
         return user;
     }

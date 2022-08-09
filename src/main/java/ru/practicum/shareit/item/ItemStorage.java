@@ -1,7 +1,6 @@
 package ru.practicum.shareit.item;
 
 import org.springframework.stereotype.Component;
-import ru.practicum.shareit.item.model.Item;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -41,7 +40,7 @@ public class ItemStorage {
     }
 
     public static Item update(Item item) {
-        Item updatedItem = getItem(item.getId());
+        Item updatedItem = getItem((int) item.getId());
         if (item.getName() != null) {
             if (!item.getName().equals("")) {
                 updatedItem.setName(item.getName());
@@ -56,7 +55,7 @@ public class ItemStorage {
         if (item.getAvailable() != null) {
             updatedItem.setAvailable(item.getAvailable());
         }
-        deleteItem(item.getId());
+        deleteItem((int) item.getId());
         addItem(updatedItem);
         return updatedItem;
     }

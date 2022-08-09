@@ -1,7 +1,8 @@
-package ru.practicum.shareit.item.model;
+package ru.practicum.shareit.item;
 
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import ru.practicum.shareit.requests.ItemRequest;
 import ru.practicum.shareit.user.User;
@@ -13,13 +14,14 @@ import javax.validation.constraints.Min;
  * // TODO .
  */
 @Data
+@NoArgsConstructor
 @Entity
 @Table(name = "items")
 public class Item {
     @Min(0)
     @Id
     @Column(name = "item_id")
-    private int id;
+    private long id;
     @Column(name = "item_name")
     private String name;
     @Column(name = "item_description")
@@ -37,7 +39,7 @@ public class Item {
     @JoinColumn(name = "request_id")
     private ItemRequest request;
 
-    public Item(int id, String name, String description, boolean available, User owner) {
+    public Item(long id, String name, String description, boolean available, User owner) {
         this.id = id;
         this.name = name;
         this.description = description;

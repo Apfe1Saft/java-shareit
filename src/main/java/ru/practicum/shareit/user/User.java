@@ -2,7 +2,7 @@ package ru.practicum.shareit.user;
 
 import lombok.Data;
 import ru.practicum.shareit.booking.Booking;
-import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.item.Item;
 import ru.practicum.shareit.requests.ItemRequest;
 
 import javax.persistence.*;
@@ -20,19 +20,19 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
-    private int id;
+    private long id;
     @Column(name = "user_name", nullable = false, length = 255)
     private String name;
     @Column(name = "user_email", nullable = false, length = 512)
     private String email;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "items")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "owner")
     private List<Item> items;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "bookings")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "booker")
     private List<Booking> bookings;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "requests")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "requestor")
     private List<ItemRequest> requests;
 
     public User() {
