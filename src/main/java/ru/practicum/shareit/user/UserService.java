@@ -15,9 +15,9 @@ public interface UserService {
 
     void setUsers(Set<User> users);
 
-    void addUser(User user);
+    User addUser(User user);
 
     void deleteUser(long userId);
 
-    User update(User user);
+    User update(UserDto user);
 }

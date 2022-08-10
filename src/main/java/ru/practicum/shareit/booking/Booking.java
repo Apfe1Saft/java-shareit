@@ -3,7 +3,7 @@ package ru.practicum.shareit.booking;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import ru.practicum.shareit.requests.ItemRequest;
+import ru.practicum.shareit.item.Item;
 import ru.practicum.shareit.user.User;
 
 import javax.persistence.*;
@@ -27,13 +27,13 @@ public class Booking {
 
     @NonNull
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "booker_id")
     private User booker;
 
     @NonNull
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "request_id")
-    private ItemRequest request;
+    @JoinColumn(name = "item_id")
+    private Item item;
 
 
 

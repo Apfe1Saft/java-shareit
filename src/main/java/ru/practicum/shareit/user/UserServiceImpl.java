@@ -40,8 +40,9 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public void addUser(User user) {
+    public User addUser(User user) {
         repository.save(user);
+        return repository.getById(user.getId());
     }
 
     @Override
@@ -50,8 +51,15 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public User update(User user) {
-        repository.save(user);
-        return user;
+    public User update(UserDto user) {
+        if (getUser(user.getId()).isPresent()) {
+            User updatedUser = getUser(user.getId()).get();
+            if (user.getName() != null) updatedUser.setName(user.getName());
+            if (user.getEmail() != null) updatedUser.setEmail(user.getEmail());
+            repository.save(updatedUser);
+            return updatedUser;
+        }
+        repository.save(UserMapper.toUser(user));
+        return UserMapper.toUser(user);
     }
 }

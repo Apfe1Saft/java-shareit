@@ -26,12 +26,12 @@ public class Item {
     private String name;
     @Column(name = "item_description")
     private String description;
-    @Column(name = "available")
+    @Column(name = "is_available")
     private Boolean available;
 
     @NonNull
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "owner_id")
     private User owner;
 
     @NonNull

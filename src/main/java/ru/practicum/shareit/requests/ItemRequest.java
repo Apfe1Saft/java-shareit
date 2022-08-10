@@ -29,10 +29,4 @@ public class ItemRequest {
     @Column(name = "request_created")
     private LocalDate created;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "request")
-    private List<Booking> bookings;
-
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "request")
-    private List<Item> items;
-
 }

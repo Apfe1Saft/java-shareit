@@ -26,16 +26,12 @@ public class User {
     @Column(name = "user_email", nullable = false, length = 512)
     private String email;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "owner")
-    private List<Item> items;
-
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "booker")
-    private List<Booking> bookings;
-
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "requestor")
-    private List<ItemRequest> requests;
-
     public User() {
     }
 
+    public User(long id, String name, String email) {
+        this.id = id;
+        this.name = name;
+        this.email = email;
+    }
 }
