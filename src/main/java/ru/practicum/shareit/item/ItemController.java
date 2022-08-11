@@ -1,6 +1,9 @@
 package ru.practicum.shareit.item;
 
+import lombok.Getter;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.shareit.comment.Comment;
+import ru.practicum.shareit.comment.CommentDto;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.exception.WrongDataException;
 import ru.practicum.shareit.user.UserService;
@@ -17,11 +20,11 @@ import java.util.stream.Stream;
 @RestController
 @RequestMapping("/items")
 public class ItemController {
-    private ItemService itemService;
+    @Getter
+    private static ItemService itemService;
 
     public ItemController(ItemService service) {
-        System.out.println("Item");
-        this.itemService = service;
+        itemService = service;
     }
 
     @PostMapping
@@ -41,12 +44,12 @@ public class ItemController {
     public @Valid ItemDto update(@PathVariable("itemId") long itemId,
                                  @RequestHeader("X-Sharer-User-Id") String ownerId,
                                  @Valid @RequestBody final ItemDto itemDto) {
-        return ItemMapper.toItemDto(itemService.updateItem(itemDto,Long.parseLong(ownerId),itemId));
+        return ItemMapper.toItemDto(itemService.updateItem(itemDto, Long.parseLong(ownerId), itemId));
     }
 
     @GetMapping("/{id}")
     public ItemDto getItemDtoById(@PathVariable("id") long id) {
-        if(itemService.getItemDtoById(id)!=null) {
+        if (itemService.getItemDtoById(id) != null) {
             return itemService.getItemDtoById(id);
         }
         throw new NotFoundException("Item not exist.");
@@ -55,6 +58,12 @@ public class ItemController {
     @GetMapping("/search")
     public List<ItemDto> search(@RequestParam("text") String text) {
         return itemService.searchItems(text);
+    }
+
+    @GetMapping("/{itemId}/comment")
+    public CommentDto addComment(@PathVariable("itemId") long itemId, @Valid @RequestBody CommentDto commentDto,
+                                 @RequestHeader("X-Sharer-User-Id") String userId) {
+        return itemService.addComment(commentDto, itemId, Long.parseLong(userId));
     }
 
 }

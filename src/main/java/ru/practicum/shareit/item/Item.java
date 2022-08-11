@@ -1,6 +1,8 @@
 package ru.practicum.shareit.item;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -20,6 +22,7 @@ import javax.validation.constraints.Min;
 public class Item {
     @Min(0)
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "item_id")
     private long id;
     @Column(name = "item_name")
@@ -31,6 +34,7 @@ public class Item {
 
     @NonNull
     @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnoreProperties(value = {"applications", "hibernateLazyInitializer"})
     @JoinColumn(name = "owner_id")
     private User owner;
 
@@ -41,6 +45,13 @@ public class Item {
 
     public Item(long id, String name, String description, boolean available, User owner) {
         this.id = id;
+        this.name = name;
+        this.description = description;
+        this.available = available;
+        this.owner = owner;
+    }
+
+    public Item( String name, String description, boolean available, User owner) {
         this.name = name;
         this.description = description;
         this.available = available;

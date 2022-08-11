@@ -22,7 +22,6 @@ public class ItemMapper {
         if (UserController.getUserService().getUser(ownerId).isPresent()) {
             if (itemDto.getId() == 0) {
                 return new Item(
-                        ItemStorage.getMaxId(),
                         itemDto.getName(),
                         itemDto.getDescription(),
                         itemDto.isAvailable(),
