@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 /**
  * // TODO .
@@ -17,10 +18,11 @@ import java.time.LocalDate;
 public class BookingDto {
     private long id;
     private long itemId;
-    private LocalDate start;
-    private LocalDate end;
+    private long bookerId;
+    private LocalDateTime start;
+    private LocalDateTime end;
 
-    public BookingDto(long id,long itemId, LocalDate start, LocalDate end) {
+    public BookingDto(long id,long itemId, LocalDateTime start, LocalDateTime end) {
         this.id = id;
         this.itemId = itemId;
         this.start =start;

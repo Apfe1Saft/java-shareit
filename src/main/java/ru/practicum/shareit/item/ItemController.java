@@ -37,7 +37,7 @@ public class ItemController {
 
     @GetMapping
     public @Valid Set<ItemDto> show(@RequestHeader("X-Sharer-User-Id") String ownerId) {
-        return itemService.show(Integer.parseInt(ownerId));
+        return itemService.show(Long.parseLong(ownerId));
     }
 
     @PatchMapping("/{itemId}")
@@ -48,9 +48,9 @@ public class ItemController {
     }
 
     @GetMapping("/{id}")
-    public ItemDto getItemDtoById(@PathVariable("id") long id) {
-        if (itemService.getItemDtoById(id) != null) {
-            return itemService.getItemDtoById(id);
+    public ItemDto getItemDtoById(@PathVariable("id") long id,@RequestHeader("X-Sharer-User-Id") String userId) {
+        if (itemService.getItemDtoById(id,Long.parseLong(userId)) != null) {
+            return itemService.getItemDtoById(id,Long.parseLong(userId));
         }
         throw new NotFoundException("Item not exist.");
     }

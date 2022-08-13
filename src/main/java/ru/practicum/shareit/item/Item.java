@@ -40,6 +40,7 @@ public class Item {
 
     @NonNull
     @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     @JoinColumn(name = "request_id")
     private ItemRequest request;
 

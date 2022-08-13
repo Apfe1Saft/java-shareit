@@ -1,5 +1,6 @@
 package ru.practicum.shareit.booking;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -10,6 +11,7 @@ import ru.practicum.shareit.user.User;
 import javax.persistence.*;
 import javax.validation.constraints.Min;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 /**
  * // TODO .
@@ -18,6 +20,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @Entity
 @Table(name = "bookings")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Booking {
     @Min(0)
     @Id
@@ -25,9 +28,11 @@ public class Booking {
     @Column(name = "booking_id")
     private long id;
     @Column(name = "start_date")
-    private LocalDate start;
+    @JsonFormat(pattern="yyyy-MM-dd'T'HH:mm:ss")
+    private LocalDateTime start;
     @Column(name = "end_date")
-    private LocalDate end;
+    @JsonFormat(pattern="yyyy-MM-dd'T'HH:mm:ss")
+    private LocalDateTime end;
 
     @NonNull
     @ManyToOne(fetch = FetchType.LAZY)
@@ -37,6 +42,7 @@ public class Booking {
 
     @NonNull
     @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnoreProperties(value = {"applications", "hibernateLazyInitializer"})
     @JoinColumn(name = "booker_id")
     private User booker;
 
@@ -44,7 +50,7 @@ public class Booking {
     @Enumerated(EnumType.STRING)
     private Status status;
 
-    public Booking(LocalDate start, LocalDate end, User user, Item item, Status status) {
+    public Booking(LocalDateTime start, LocalDateTime end, User user, Item item, Status status) {
         this.start = start;
         this.end = end;
         this.booker = user;

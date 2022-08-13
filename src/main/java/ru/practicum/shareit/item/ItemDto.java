@@ -1,6 +1,10 @@
 package ru.practicum.shareit.item;
 
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import ru.practicum.shareit.booking.Booking;
+import ru.practicum.shareit.booking.BookingDto;
 
 /**
  * // TODO .
@@ -11,6 +15,12 @@ public class ItemDto {
     private String name;
     private String description;
     private Boolean available = null;
+    @Getter
+    @Setter
+    private BookingDto lastBooking;
+    @Getter
+    @Setter
+    private BookingDto nextBooking;
 
     public ItemDto(){
 

@@ -3,12 +3,16 @@ package ru.practicum.shareit.item;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import ru.practicum.shareit.booking.*;
 import ru.practicum.shareit.comment.Comment;
 import ru.practicum.shareit.comment.CommentDto;
 import ru.practicum.shareit.comment.CommentMapper;
 import ru.practicum.shareit.comment.CommentRepository;
 import ru.practicum.shareit.exception.NotFoundException;
+import ru.practicum.shareit.exception.WrongDataException;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Component
@@ -46,9 +50,26 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public ItemDto getItemDtoById(long itemId) {
+    public ItemDto getItemDtoById(long itemId,long userId) {
         if (repository.existsById(itemId)) {
-            return ItemMapper.toItemDto(repository.getById(itemId));
+            ItemDto answer = ItemMapper.toItemDto(repository.getById(itemId));
+            if (BookingController.getBookingService().showOwnerBookings(userId, State.PAST).stream().anyMatch(x -> x.getItem().getId() == itemId) &&
+                    BookingController.getBookingService().showOwnerBookings(userId, State.FUTURE).stream().anyMatch(x -> x.getItem().getId() == itemId)
+            ) {
+                BookingDto lastBooking = BookingMapper.toBookingDto(BookingController.getBookingService().showOwnerBookings(repository.getById(itemId).
+                        getOwner().getId(), State.PAST).stream().filter(x -> x.getItem().getId() == itemId).findFirst().get());
+                System.out.println("<----------->"+BookingController.getBookingService().showOwnerBookings(repository.getById(itemId).
+                        getOwner().getId(), State.PAST));
+                System.out.println(itemId);
+                System.out.println(lastBooking);
+                BookingDto nextBooking = BookingMapper.toBookingDto(BookingController.getBookingService().showOwnerBookings(repository.getById(itemId).
+                        getOwner().getId(), State.FUTURE).stream().filter(x -> x.getItem().getId() == itemId).findFirst().get());
+                lastBooking.setBookerId(BookingController.getBookingService().getBooking(lastBooking.getId()).getBooker().getId());
+                nextBooking.setBookerId(BookingController.getBookingService().getBooking(nextBooking.getId()).getBooker().getId());
+                answer.setLastBooking(lastBooking);
+                answer.setNextBooking(nextBooking);
+            }
+            return answer;
         }
         return null;
     }
@@ -57,7 +78,7 @@ public class ItemServiceImpl implements ItemService {
     public List<ItemDto> searchItems(String text) {
         if (text.equals("")) return new LinkedList<>();
         List<Item> itemList = repository.
-                searchWithParams(text);//,text,true);
+                searchWithParams(text);
         List<ItemDto> answerList = new LinkedList<>();
         for (Item item : itemList) {
             answerList.add(ItemMapper.toItemDto(item));
@@ -70,7 +91,7 @@ public class ItemServiceImpl implements ItemService {
         Set<ItemDto> answer = new HashSet<>();
         for (Item item : repository.findAll()) {
             if (item.getOwner().getId() == id) {
-                answer.add(ItemMapper.toItemDto(item));
+                answer.add(getItemDtoById(item.getId(),id));
             }
         }
         return answer;
@@ -86,7 +107,12 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public CommentDto addComment(CommentDto commentDto, long itemId, long userId) {
         Comment comment = CommentMapper.toComment(commentDto, itemId, userId);
-        commentRepository.save(comment);
-        return CommentMapper.toCommentDto(commentRepository.getById(comment.getId()));
+        for (Booking booking : BookingController.getBookingService().showAllUserBookings(userId,State.ALL)) {
+            if (booking.getItem().getId() == itemId && booking.getEnd().isBefore(LocalDateTime.now())) {
+                commentRepository.save(comment);
+                return CommentMapper.toCommentDto(commentRepository.getById(comment.getId()));
+            }
+        }
+        throw new WrongDataException("The user can not set comment about the item.");
     }
 }

@@ -4,9 +4,11 @@ import java.util.List;
 
 public interface BookingService {
     Booking createBooking(Booking booking);
-    Boolean approval(long bookingId,long userId,boolean approval);
+    void approval(long bookingId,long userId,boolean approval);
     Booking getBooking(long bookingId);
-    List<Booking> showAllOwnerBookings(long userId);
-    List<Booking> showAllUserItemBookings(long userId);
+    List<Booking> showAllUserBookings(long userId,State state);
+    List<Booking> showOwnerBookings(long userId,State state);
+    List<Booking> showAll(State state);
+    boolean isBookingExist(long bookingId);
 
 }
