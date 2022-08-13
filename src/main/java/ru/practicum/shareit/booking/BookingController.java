@@ -1,13 +1,11 @@
 package ru.practicum.shareit.booking;
 
 import lombok.Getter;
-import org.springframework.core.convert.ConversionFailedException;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.HandlerMapping;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.exception.ValidationException;
-import ru.practicum.shareit.exception.WrongDataException;
 import ru.practicum.shareit.user.UserController;
 
 import javax.servlet.http.HttpServletRequest;
@@ -31,33 +29,28 @@ public class BookingController {
         BookingController.bookingService = bookingService;
     }
 
-    //POST /bookings
     @PostMapping
     public @Valid BookingDto create(@Valid @RequestBody final BookingDto bookingDto,
                                     @RequestHeader("X-Sharer-User-Id") String userId) {
-        System.out.println("create");
         return BookingMapper.toBookingDto(
                 bookingService.createBooking(BookingMapper.toBooking(bookingDto, Long.parseLong(userId)))
         );
     }
 
-    //PATCH /bookings/{bookingId}?
     @PatchMapping("/{bookingId}?")
     public Booking approval(@RequestHeader("X-Sharer-User-Id") String userId,
                             @RequestParam("approved") boolean approval, @PathVariable("bookingId") String bookingId
             , HttpServletRequest request) {
-        System.out.println("approval");
         bookingId = new AntPathMatcher().extractPathWithinPattern(request.getAttribute(HandlerMapping.BEST_MATCHING_PATTERN_ATTRIBUTE).toString(), request.getRequestURI());
         bookingService.approval(Long.parseLong(bookingId),
                 Long.parseLong(userId), approval);
         return getBookingService().getBooking(Long.parseLong(bookingId));
     }
 
-    //GET /bookings/{bookingId}
     @GetMapping(value = "/{bookingId:[0-9]+}")
     public @Valid Booking getBooking(@RequestHeader("X-Sharer-User-Id") String userId, @PathVariable("bookingId") long bookingId) {
         System.out.println("getBooking");
-        if(!bookingService.isBookingExist(bookingId)){
+        if (!bookingService.isBookingExist(bookingId)) {
             throw new NotFoundException("Booking is not exist.");
         }
         isUserExist(Long.parseLong(userId));
@@ -69,7 +62,6 @@ public class BookingController {
         throw new NotFoundException("User is not the creator of the booking or owner of the item.");
     }
 
-    //GET /bookings/owner?state={state}
     @GetMapping(value = "/owner")
     public @Valid List<Booking> getOwnerBookings(@RequestHeader("X-Sharer-User-Id") String userId,
                                                  @RequestParam(name = "state", defaultValue = "ALL", required = false) String state) {
@@ -88,14 +80,12 @@ public class BookingController {
     @GetMapping("?state={state}")
     public List<Booking> showAllUserBookings(@RequestHeader("X-Sharer-User-Id") String userId,
                                              @RequestParam(name = "state", defaultValue = "ALL") String state) {
-        System.out.println("showAllUserBookings");
-        return bookingService.showAllUserBookings(Long.parseLong(userId),State.valueOf(state));
+        return bookingService.showAllUserBookings(Long.parseLong(userId), State.valueOf(state));
     }
 
     @GetMapping("")
     public List<Booking> showAll(@RequestHeader("X-Sharer-User-Id") String userId,
                                  @RequestParam(name = "state", defaultValue = "ALL") String state) {
-        System.out.println("showAll");
         State newState;
         try {
             newState = State.valueOf(state);
@@ -107,8 +97,8 @@ public class BookingController {
         }
         List<Booking> answer;
 
-        answer = bookingService.showAll(newState).stream().filter(x->x.getBooker().
-                getId()==Long.parseLong(userId)).collect(Collectors.toList());
+        answer = bookingService.showAll(newState).stream().filter(x -> x.getBooker().
+                getId() == Long.parseLong(userId)).collect(Collectors.toList());
 
 
         Collections.reverse(answer);

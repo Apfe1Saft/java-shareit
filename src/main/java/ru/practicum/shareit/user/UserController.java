@@ -1,19 +1,16 @@
 package ru.practicum.shareit.user;
 
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.shareit.exception.NotFoundException;
+import ru.practicum.shareit.exception.NullParamException;
+import ru.practicum.shareit.exception.WrongDataException;
 
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
-
-import ru.practicum.shareit.exception.*;
 
 /**
  * // TODO .
@@ -24,8 +21,9 @@ import ru.practicum.shareit.exception.*;
 @Slf4j
 public class UserController {
     @Getter
-    private static UserService userService ;
-    public UserController(UserService userService){
+    private static UserService userService;
+
+    public UserController(UserService userService) {
         UserController.userService = userService;
     }
 
@@ -60,15 +58,13 @@ public class UserController {
 
     @GetMapping("/{id}")
     public Optional<User> getById(@PathVariable("id") long id) {
-        if(userService.getUser(id).isPresent()) {
+        if (userService.getUser(id).isPresent()) {
             return userService.getUser(id);
-        }
-        else throw new NotFoundException("User not exist");
+        } else throw new NotFoundException("User not exist");
     }
 
     public void userChecker(User user) {
         if (user.getName() == null) throw new NullParamException("");
-        //if (userService.isEmailExist(user.getEmail())) throw new ValidationException("");
         if (user.getEmail() != null) {
             if (!user.getEmail().contains("@")) throw new WrongDataException("");
         }

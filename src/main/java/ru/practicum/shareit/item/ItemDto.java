@@ -3,26 +3,28 @@ package ru.practicum.shareit.item;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
-import ru.practicum.shareit.booking.Booking;
 import ru.practicum.shareit.booking.BookingDto;
+import ru.practicum.shareit.comment.CommentDto;
+
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * // TODO .
  */
 @Data
+@Getter
+@Setter
 public class ItemDto {
     private long id;
     private String name;
     private String description;
     private Boolean available = null;
-    @Getter
-    @Setter
     private BookingDto lastBooking;
-    @Getter
-    @Setter
     private BookingDto nextBooking;
+    private List<CommentDto> comments = new LinkedList<>();
 
-    public ItemDto(){
+    public ItemDto() {
 
     }
 
@@ -31,6 +33,7 @@ public class ItemDto {
         this.name = name;
         this.description = description;
         this.available = available;
+
     }
 
     public Boolean isAvailable() {

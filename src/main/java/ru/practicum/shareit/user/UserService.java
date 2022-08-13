@@ -1,7 +1,5 @@
 package ru.practicum.shareit.user;
 
-import ru.practicum.shareit.exception.NullParamException;
-
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;

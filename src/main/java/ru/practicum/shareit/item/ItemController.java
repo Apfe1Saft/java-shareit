@@ -2,17 +2,12 @@ package ru.practicum.shareit.item;
 
 import lombok.Getter;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.shareit.comment.Comment;
 import ru.practicum.shareit.comment.CommentDto;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.exception.WrongDataException;
-import ru.practicum.shareit.user.UserService;
 
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Stream;
 
 /**
  * // TODO .
@@ -36,7 +31,7 @@ public class ItemController {
     }
 
     @GetMapping
-    public @Valid Set<ItemDto> show(@RequestHeader("X-Sharer-User-Id") String ownerId) {
+    public @Valid List<ItemDto> show(@RequestHeader("X-Sharer-User-Id") String ownerId) {
         return itemService.show(Long.parseLong(ownerId));
     }
 
@@ -60,9 +55,10 @@ public class ItemController {
         return itemService.searchItems(text);
     }
 
-    @GetMapping("/{itemId}/comment")
+    @PostMapping("/{itemId}/comment")
     public CommentDto addComment(@PathVariable("itemId") long itemId, @Valid @RequestBody CommentDto commentDto,
                                  @RequestHeader("X-Sharer-User-Id") String userId) {
+        if(commentDto.getText().equals("")) throw new WrongDataException("text is empty.");
         return itemService.addComment(commentDto, itemId, Long.parseLong(userId));
     }
 

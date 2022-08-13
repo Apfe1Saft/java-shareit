@@ -21,7 +21,7 @@ public class CommentMapper {
                 comment.getText(),
                 comment.getCreated(),
                 comment.getItem().getId(),
-                comment.getAuthor().getId()
+                UserController.getUserService().getUser(comment.getAuthor().getId()).get().getName()
         );
     }
 }

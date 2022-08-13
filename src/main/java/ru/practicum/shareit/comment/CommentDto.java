@@ -10,13 +10,15 @@ import java.time.LocalDate;
 public class CommentDto {
     private long id;
     private long itemId;
-    private long userId;
+    private String authorName;
     private String text;
-    private LocalDate created;
+    private LocalDate created = LocalDate.now();
 
-    public CommentDto(long id, String text, LocalDate created,long itemId,long userId) {
+    public CommentDto(long id, String text, LocalDate created, long itemId, String name) {
         this.id = id;
         this.text = text;
         this.created = created;
+        this.authorName = name;
+        this.itemId = itemId;
     }
 }

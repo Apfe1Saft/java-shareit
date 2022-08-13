@@ -1,10 +1,10 @@
 package ru.practicum.shareit.user;
 
+import ru.practicum.shareit.exception.NullParamException;
+
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
-
-import ru.practicum.shareit.exception.*;
 
 public class UserStorage {
     private static Set<User> users = new HashSet<>();

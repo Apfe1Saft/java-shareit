@@ -11,9 +11,12 @@ import ru.practicum.shareit.comment.CommentRepository;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.exception.WrongDataException;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.Comparator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -50,7 +53,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public ItemDto getItemDtoById(long itemId,long userId) {
+    public ItemDto getItemDtoById(long itemId, long userId) {
         if (repository.existsById(itemId)) {
             ItemDto answer = ItemMapper.toItemDto(repository.getById(itemId));
             if (BookingController.getBookingService().showOwnerBookings(userId, State.PAST).stream().anyMatch(x -> x.getItem().getId() == itemId) &&
@@ -58,16 +61,17 @@ public class ItemServiceImpl implements ItemService {
             ) {
                 BookingDto lastBooking = BookingMapper.toBookingDto(BookingController.getBookingService().showOwnerBookings(repository.getById(itemId).
                         getOwner().getId(), State.PAST).stream().filter(x -> x.getItem().getId() == itemId).findFirst().get());
-                System.out.println("<----------->"+BookingController.getBookingService().showOwnerBookings(repository.getById(itemId).
-                        getOwner().getId(), State.PAST));
-                System.out.println(itemId);
-                System.out.println(lastBooking);
                 BookingDto nextBooking = BookingMapper.toBookingDto(BookingController.getBookingService().showOwnerBookings(repository.getById(itemId).
                         getOwner().getId(), State.FUTURE).stream().filter(x -> x.getItem().getId() == itemId).findFirst().get());
                 lastBooking.setBookerId(BookingController.getBookingService().getBooking(lastBooking.getId()).getBooker().getId());
                 nextBooking.setBookerId(BookingController.getBookingService().getBooking(nextBooking.getId()).getBooker().getId());
                 answer.setLastBooking(lastBooking);
                 answer.setNextBooking(nextBooking);
+            }
+            if (getComment(itemId) != null) {
+                List<CommentDto> commentDto = answer.getComments();
+                commentDto.add(CommentMapper.toCommentDto(getComment(itemId)));
+                answer.setComments(commentDto);
             }
             return answer;
         }
@@ -87,14 +91,14 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public Set<ItemDto> show(long id) {
-        Set<ItemDto> answer = new HashSet<>();
+    public List<ItemDto> show(long id) {
+        List<ItemDto> answer = new LinkedList<>();
         for (Item item : repository.findAll()) {
             if (item.getOwner().getId() == id) {
-                answer.add(getItemDtoById(item.getId(),id));
+                answer.add(getItemDtoById(item.getId(), id));
             }
         }
-        return answer;
+        return answer.stream().sorted(Comparator.comparing(ItemDto::getId)).collect(Collectors.toList());
     }
 
     @Override
@@ -107,12 +111,20 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public CommentDto addComment(CommentDto commentDto, long itemId, long userId) {
         Comment comment = CommentMapper.toComment(commentDto, itemId, userId);
-        for (Booking booking : BookingController.getBookingService().showAllUserBookings(userId,State.ALL)) {
+        for (Booking booking : BookingController.getBookingService().showAllUserBookings(userId, State.ALL)) {
             if (booking.getItem().getId() == itemId && booking.getEnd().isBefore(LocalDateTime.now())) {
                 commentRepository.save(comment);
                 return CommentMapper.toCommentDto(commentRepository.getById(comment.getId()));
             }
         }
         throw new WrongDataException("The user can not set comment about the item.");
+    }
+
+    @Override
+    public Comment getComment(long itemId) {
+        if (commentRepository.findAll().stream().anyMatch(x -> x.getItem().getId() == itemId)) {
+            return commentRepository.findAll().stream().filter(x -> x.getItem().getId() == itemId).findFirst().get();
+        }
+        return null;
     }
 }

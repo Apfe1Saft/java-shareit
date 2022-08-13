@@ -11,7 +11,7 @@ import java.util.Set;
 @Component
 @RequiredArgsConstructor
 @Getter
-public class UserServiceImpl implements UserService{
+public class UserServiceImpl implements UserService {
     private final UserRepository repository;
 
     @Override
@@ -26,7 +26,7 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public boolean isEmailExist(String email) {
-        for(User user : getUsers()){
+        for (User user : getUsers()) {
             if (user.getEmail().equals(email)) return true;
         }
         return false;
@@ -34,7 +34,7 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public void setUsers(Set<User> users) {
-        for(User user : users){
+        for (User user : users) {
             repository.save(user);
         }
     }

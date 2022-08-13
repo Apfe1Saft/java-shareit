@@ -1,10 +1,8 @@
 package ru.practicum.shareit.item;
 
+import ru.practicum.shareit.exception.NotFoundException;
+import ru.practicum.shareit.exception.WrongDataException;
 import ru.practicum.shareit.user.UserController;
-import ru.practicum.shareit.user.UserService;
-import ru.practicum.shareit.user.UserStorage;
-
-import ru.practicum.shareit.exception.*;
 
 public class ItemMapper {
     public static ItemDto toItemDto(Item item) {

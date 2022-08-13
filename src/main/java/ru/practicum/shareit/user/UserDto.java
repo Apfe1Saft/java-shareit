@@ -11,7 +11,8 @@ public class UserDto {
     long id;
     String name;
     String email;
-    public UserDto(){
+
+    public UserDto() {
 
     }
 

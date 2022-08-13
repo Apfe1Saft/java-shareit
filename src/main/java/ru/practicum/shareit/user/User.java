@@ -1,13 +1,9 @@
 package ru.practicum.shareit.user;
 
 import lombok.Data;
-import ru.practicum.shareit.booking.Booking;
-import ru.practicum.shareit.item.Item;
-import ru.practicum.shareit.requests.ItemRequest;
 
 import javax.persistence.*;
 import javax.validation.constraints.Min;
-import java.util.List;
 
 /**
  * // TODO .
