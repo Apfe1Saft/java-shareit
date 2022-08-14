@@ -1,11 +1,13 @@
 package ru.practicum.shareit.item;
 
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 import java.util.HashSet;
 import java.util.Set;
 
 @Component
+//@Profile("test")
 public class ItemStorage {
     private static Set<Item> items = new HashSet<>();
     private static int maxId = 0;

@@ -2,6 +2,7 @@ package ru.practicum.shareit.item;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 import ru.practicum.shareit.booking.*;
 import ru.practicum.shareit.comment.Comment;
@@ -19,6 +20,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Component
+//@Profile("test")
 @RequiredArgsConstructor
 public class ItemServiceImpl implements ItemService {
     @Getter

@@ -1,6 +1,7 @@
 package ru.practicum.shareit.booking;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.exception.WrongDataException;
@@ -12,6 +13,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
+//@Profile("test")
 @RequiredArgsConstructor
 public class BookingServiceImpl implements BookingService {
     private final BookingRepository repository;
