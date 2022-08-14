@@ -1,6 +1,7 @@
 package ru.practicum.shareit.booking;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -18,7 +19,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Entity
 @Table(name = "bookings")
-//@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Booking {
     @Min(0)
     @Id
@@ -34,13 +35,13 @@ public class Booking {
 
     @NonNull
     @ManyToOne(fetch = FetchType.LAZY)
-//    @JsonIgnoreProperties(value = {"applications", "hibernateLazyInitializer"})
+    @JsonIgnoreProperties(value = {"applications", "hibernateLazyInitializer"})
     @JoinColumn(name = "item_id")
     private Item item;
 
     @NonNull
     @ManyToOne(fetch = FetchType.LAZY)
-//    @JsonIgnoreProperties(value = {"applications", "hibernateLazyInitializer"})
+    @JsonIgnoreProperties(value = {"applications", "hibernateLazyInitializer"})
     @JoinColumn(name = "booker_id")
     private User booker;
 
