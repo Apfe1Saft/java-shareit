@@ -2,7 +2,6 @@ package ru.practicum.shareit.item;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 import ru.practicum.shareit.booking.*;
 import ru.practicum.shareit.comment.Comment;
@@ -20,7 +19,6 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Component
-//@Profile("test")
 @RequiredArgsConstructor
 public class ItemServiceImpl implements ItemService {
     @Getter
@@ -61,10 +59,10 @@ public class ItemServiceImpl implements ItemService {
             if (BookingController.getBookingService().showOwnerBookings(userId, State.PAST).stream().anyMatch(x -> x.getItem().getId() == itemId) &&
                     BookingController.getBookingService().showOwnerBookings(userId, State.FUTURE).stream().anyMatch(x -> x.getItem().getId() == itemId)
             ) {
-                BookingDto lastBooking = BookingMapper.toBookingDto(BookingController.getBookingService().showOwnerBookings(repository.getById(itemId).
-                        getOwner().getId(), State.PAST).stream().filter(x -> x.getItem().getId() == itemId).findFirst().get());
-                BookingDto nextBooking = BookingMapper.toBookingDto(BookingController.getBookingService().showOwnerBookings(repository.getById(itemId).
-                        getOwner().getId(), State.FUTURE).stream().filter(x -> x.getItem().getId() == itemId).findFirst().get());
+                BookingDto lastBooking = BookingMapper.toBookingDto(BookingController.getBookingService().showOwnerBookings(repository.getById(itemId)
+                        .getOwner().getId(), State.PAST).stream().filter(x -> x.getItem().getId() == itemId).findFirst().get());
+                BookingDto nextBooking = BookingMapper.toBookingDto(BookingController.getBookingService().showOwnerBookings(repository.getById(itemId)
+                        .getOwner().getId(), State.FUTURE).stream().filter(x -> x.getItem().getId() == itemId).findFirst().get());
                 lastBooking.setBookerId(BookingController.getBookingService().getBooking(lastBooking.getId()).getBooker().getId());
                 nextBooking.setBookerId(BookingController.getBookingService().getBooking(nextBooking.getId()).getBooker().getId());
                 answer.setLastBooking(lastBooking);
@@ -83,8 +81,7 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public List<ItemDto> searchItems(String text) {
         if (text.equals("")) return new LinkedList<>();
-        List<Item> itemList = repository.
-                searchWithParams(text);
+        List<Item> itemList = repository.searchWithParams(text);
         List<ItemDto> answerList = new LinkedList<>();
         for (Item item : itemList) {
             answerList.add(ItemMapper.toItemDto(item));

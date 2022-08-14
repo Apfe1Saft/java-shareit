@@ -21,10 +21,10 @@ public class BookingDto {
     private LocalDateTime start;
     private LocalDateTime end;
 
-    public BookingDto(long id,long itemId, LocalDateTime start, LocalDateTime end) {
+    public BookingDto(long id, long itemId, LocalDateTime start, LocalDateTime end) {
         this.id = id;
         this.itemId = itemId;
-        this.start =start;
+        this.start = start;
         this.end = end;
     }
 }

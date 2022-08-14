@@ -43,9 +43,9 @@ public class ItemController {
     }
 
     @GetMapping("/{id}")
-    public ItemDto getItemDtoById(@PathVariable("id") long id,@RequestHeader("X-Sharer-User-Id") String userId) {
-        if (itemService.getItemDtoById(id,Long.parseLong(userId)) != null) {
-            return itemService.getItemDtoById(id,Long.parseLong(userId));
+    public ItemDto getItemDtoById(@PathVariable("id") long id, @RequestHeader("X-Sharer-User-Id") String userId) {
+        if (itemService.getItemDtoById(id, Long.parseLong(userId)) != null) {
+            return itemService.getItemDtoById(id, Long.parseLong(userId));
         }
         throw new NotFoundException("Item not exist.");
     }
@@ -58,7 +58,7 @@ public class ItemController {
     @PostMapping("/{itemId}/comment")
     public CommentDto addComment(@PathVariable("itemId") long itemId, @Valid @RequestBody CommentDto commentDto,
                                  @RequestHeader("X-Sharer-User-Id") String userId) {
-        if(commentDto.getText().equals("")) throw new WrongDataException("text is empty.");
+        if (commentDto.getText().equals("")) throw new WrongDataException("text is empty.");
         return itemService.addComment(commentDto, itemId, Long.parseLong(userId));
     }
 

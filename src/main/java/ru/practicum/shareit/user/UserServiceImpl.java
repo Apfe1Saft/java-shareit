@@ -2,7 +2,6 @@ package ru.practicum.shareit.user;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -10,7 +9,6 @@ import java.util.Optional;
 import java.util.Set;
 
 @Component
-//@Profile("test")
 @RequiredArgsConstructor
 @Getter
 public class UserServiceImpl implements UserService {

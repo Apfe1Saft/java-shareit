@@ -51,7 +51,7 @@ public class Item {
         this.owner = owner;
     }
 
-    public Item( String name, String description, boolean available, User owner) {
+    public Item(String name, String description, boolean available, User owner) {
         this.name = name;
         this.description = description;
         this.available = available;

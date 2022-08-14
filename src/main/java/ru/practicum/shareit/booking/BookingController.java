@@ -39,8 +39,7 @@ public class BookingController {
 
     @PatchMapping("/{bookingId}?")
     public Booking approval(@RequestHeader("X-Sharer-User-Id") String userId,
-                            @RequestParam("approved") boolean approval, @PathVariable("bookingId") String bookingId
-            , HttpServletRequest request) {
+                            @RequestParam("approved") boolean approval, @PathVariable("bookingId") String bookingId, HttpServletRequest request) {
         bookingId = new AntPathMatcher().extractPathWithinPattern(request.getAttribute(HandlerMapping.BEST_MATCHING_PATTERN_ATTRIBUTE).toString(), request.getRequestURI());
         bookingService.approval(Long.parseLong(bookingId),
                 Long.parseLong(userId), approval);
@@ -97,8 +96,8 @@ public class BookingController {
         }
         List<Booking> answer;
 
-        answer = bookingService.showAll(newState).stream().filter(x -> x.getBooker().
-                getId() == Long.parseLong(userId)).collect(Collectors.toList());
+        answer = bookingService.showAll(newState).stream().filter(x -> x.getBooker()
+                .getId() == Long.parseLong(userId)).collect(Collectors.toList());
 
 
         Collections.reverse(answer);

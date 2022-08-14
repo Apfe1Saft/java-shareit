@@ -4,7 +4,7 @@ import ru.practicum.shareit.item.ItemController;
 import ru.practicum.shareit.user.UserController;
 
 public class CommentMapper {
-    public static Comment toComment(CommentDto commentDto, long itemId,long userid) {
+    public static Comment toComment(CommentDto commentDto, long itemId, long userid) {
         return new Comment(
                 commentDto.getId(),
                 commentDto.getText(),

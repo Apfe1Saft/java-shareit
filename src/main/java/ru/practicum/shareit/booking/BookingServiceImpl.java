@@ -1,7 +1,6 @@
 package ru.practicum.shareit.booking;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.exception.WrongDataException;
@@ -13,7 +12,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
-//@Profile("test")
 @RequiredArgsConstructor
 public class BookingServiceImpl implements BookingService {
     private final BookingRepository repository;
@@ -26,7 +24,7 @@ public class BookingServiceImpl implements BookingService {
             throw new WrongDataException("Wrong start date.");
         if (booking.getItem().isAvailable()) {
             repository.save(booking);
-            return repository.getById(booking.getId());
+            return repository.findById(booking.getId()).orElseThrow();
         } else throw new WrongDataException("available is false.");
     }
 
@@ -56,15 +54,17 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public List<Booking> showAllUserBookings(long userId, State state) {
-        return showAll(state).stream().filter(x -> x.getBooker().getId() == userId)
-                .sorted(new BookingComparator()).
-                        collect(Collectors.toList());
+        return showAll(state).stream()
+                .filter(x -> x.getBooker().getId() == userId)
+                .sorted(new BookingComparator())
+                .collect(Collectors.toList());
     }
 
     @Override
     public List<Booking> showOwnerBookings(long userId, State state) {
-        List<Booking> listOfBooking = showAll(state).stream().filter(x -> x.getItem().getOwner().
-                getId() == userId).collect(Collectors.toList());
+        List<Booking> listOfBooking = showAll(state).stream()
+                .filter(x -> x.getItem().getOwner()
+                        .getId() == userId).collect(Collectors.toList());
         Collections.reverse(listOfBooking);
         return listOfBooking;
     }
@@ -73,24 +73,30 @@ public class BookingServiceImpl implements BookingService {
     public List<Booking> showAll(State state) {
         switch (state) {
             case ALL:
-                return repository.findAll().stream().sorted(Comparator.comparing(Booking::getStart)).
-                        collect(Collectors.toList());
+                return repository.findAll().stream()
+                        .sorted(Comparator.comparing(Booking::getStart))
+                        .collect(Collectors.toList());
             case PAST:
-                return repository.findAll().stream().filter(x -> x.getEnd().isBefore(LocalDateTime.now())).
-                        collect(Collectors.toList());
+                return repository.findAll().stream()
+                        .filter(x -> x.getEnd().isBefore(LocalDateTime.now()))
+                        .collect(Collectors.toList());
             case FUTURE:
-                return repository.findAll().stream().filter(x -> x.getStart().isAfter(LocalDateTime.now())).
-                        collect(Collectors.toList());
+                return repository.findAll().stream()
+                        .filter(x -> x.getStart().isAfter(LocalDateTime.now()))
+                        .collect(Collectors.toList());
             case CURRENT:
-                return repository.findAll().stream().filter(x -> x.getStart().isBefore(LocalDateTime.now())).
-                        filter(x -> x.getEnd().isAfter(LocalDateTime.now())).
-                        collect(Collectors.toList());
+                return repository.findAll().stream()
+                        .filter(x -> x.getStart().isBefore(LocalDateTime.now()))
+                        .filter(x -> x.getEnd().isAfter(LocalDateTime.now()))
+                        .collect(Collectors.toList());
             case WAITING:
-                return repository.findAll().stream().filter(x -> x.getStatus().equals(Status.WAITING)).
-                        collect(Collectors.toList());
+                return repository.findAll().stream()
+                        .filter(x -> x.getStatus().equals(Status.WAITING))
+                        .collect(Collectors.toList());
             default:
-                return repository.findAll().stream().filter(x -> x.getStatus().equals(Status.REJECTED)).
-                        collect(Collectors.toList());
+                return repository.findAll().stream()
+                        .filter(x -> x.getStatus().equals(Status.REJECTED))
+                        .collect(Collectors.toList());
         }
 
     }
@@ -98,13 +104,5 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public boolean isBookingExist(long bookingId) {
         return repository.existsById(bookingId);
-    }
-}
-
-class BookingComparator implements Comparator<Booking> {
-
-    @Override
-    public int compare(Booking a, Booking b) {
-        return a.getStart().compareTo(b.getStart());
     }
 }
