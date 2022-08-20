@@ -23,6 +23,7 @@ public class ItemDto {
     private BookingDto lastBooking;
     private BookingDto nextBooking;
     private List<CommentDto> comments = new LinkedList<>();
+    private long itemRequestId;
 
     public ItemDto() {
 

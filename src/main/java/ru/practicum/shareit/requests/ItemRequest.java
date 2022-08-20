@@ -1,10 +1,12 @@
 package ru.practicum.shareit.requests;
 
 import lombok.Data;
+import ru.practicum.shareit.item.ItemDto;
 import ru.practicum.shareit.user.User;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.List;
 
 /**
  * // TODO .
@@ -25,5 +27,6 @@ public class ItemRequest {
 
     @Column(name = "request_created")
     private LocalDate created;
+    private List<ItemDto> answers;
 
 }

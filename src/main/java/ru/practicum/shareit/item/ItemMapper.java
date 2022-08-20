@@ -2,6 +2,7 @@ package ru.practicum.shareit.item;
 
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.exception.WrongDataException;
+import ru.practicum.shareit.requests.ItemRequestController;
 import ru.practicum.shareit.user.UserController;
 
 public class ItemMapper {
@@ -23,14 +24,16 @@ public class ItemMapper {
                         itemDto.getName(),
                         itemDto.getDescription(),
                         itemDto.isAvailable(),
-                        UserController.getUserService().getUser(ownerId).get()
+                        UserController.getUserService().getUser(ownerId).get(),
+                        ItemRequestController.getService().getRequestById(itemDto.getItemRequestId())
                 );
             } else return new Item(
                     itemDto.getId(),
                     itemDto.getName(),
                     itemDto.getDescription(),
                     itemDto.isAvailable(),
-                    UserController.getUserService().getUser(ownerId).get()
+                    UserController.getUserService().getUser(ownerId).get(),
+                    ItemRequestController.getService().getRequestById(itemDto.getItemRequestId())
             );
         }
         throw new NotFoundException("");

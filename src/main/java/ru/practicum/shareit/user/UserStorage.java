@@ -36,7 +36,6 @@ public class UserStorage {
 
     public static void addUser(User user) {
         getUsers().add(user);
-
     }
 
     public static void deleteUser(int userId) {

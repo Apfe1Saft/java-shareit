@@ -30,6 +30,7 @@ public class Item {
     private String description;
     @Column(name = "is_available")
     private Boolean available;
+    private final User user;
 
     @NonNull
     @ManyToOne(fetch = FetchType.LAZY)
@@ -56,6 +57,23 @@ public class Item {
         this.description = description;
         this.available = available;
         this.owner = owner;
+    }
+
+    public Item(String name, String description, boolean available, User owner,ItemRequest request) {
+        this.name = name;
+        this.description = description;
+        this.available = available;
+        this.owner = owner;
+        this.request = request;
+    }
+
+    public Item(long id, String name, String description, Boolean available, User user, ItemRequest requestById) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.available = available;
+        this.user = user;
+        request = requestById;
     }
 
     public Boolean isAvailable() {
