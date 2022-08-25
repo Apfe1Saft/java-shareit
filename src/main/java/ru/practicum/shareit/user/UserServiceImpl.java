@@ -14,17 +14,17 @@ import java.util.Set;
 public class UserServiceImpl implements UserService {
     private final UserRepository repository;
 
-    @Override
+    @Override//I&T
     public List<User> getUsers() {
         return repository.findAll();
     }
 
-    @Override
+    @Override//I&T
     public Optional<User> getUser(long userId) {
         return repository.findById(userId);
     }
 
-    @Override
+    @Override//unit-test
     public boolean isEmailExist(String email) {
         for (User user : getUsers()) {
             if (user.getEmail().equals(email)) return true;
@@ -32,25 +32,25 @@ public class UserServiceImpl implements UserService {
         return false;
     }
 
-    @Override
+    @Override//I&T
     public void setUsers(Set<User> users) {
         for (User user : users) {
             repository.save(user);
         }
     }
 
-    @Override
+    @Override//I&T
     public User addUser(User user) {
         repository.save(user);
         return repository.getById(user.getId());
     }
 
-    @Override
+    @Override//I&T
     public void deleteUser(long userId) {
         repository.delete(getUser(userId).get());
     }
 
-    @Override
+    @Override//unit-test
     public User update(UserDto user) {
         if (getUser(user.getId()).isPresent()) {
             User updatedUser = getUser(user.getId()).get();

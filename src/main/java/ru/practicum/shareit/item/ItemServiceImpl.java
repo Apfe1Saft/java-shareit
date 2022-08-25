@@ -2,6 +2,10 @@ package ru.practicum.shareit.item;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 import ru.practicum.shareit.booking.*;
 import ru.practicum.shareit.comment.Comment;
@@ -27,13 +31,13 @@ public class ItemServiceImpl implements ItemService {
     @Getter
     private final CommentRepository commentRepository;
 
-    @Override
+    @Override//I&T
     public Item addItem(Item item) {
         repository.save(item);
         return repository.getById(item.getId());
     }
 
-    @Override
+    @Override//I&T
     public Item updateItem(ItemDto itemDto, long ownerId, long itemId) {
         if (ownerId == Objects.requireNonNull(repository.getById(itemId)).getOwner().getId()) {
             if (itemDto.isAvailable() == null) {
@@ -52,7 +56,7 @@ public class ItemServiceImpl implements ItemService {
         throw new NotFoundException("");
     }
 
-    @Override
+    @Override//I&T
     public ItemDto getItemDtoById(long itemId, long userId) {
         if (repository.existsById(itemId)) {
             ItemDto answer = ItemMapper.toItemDto(repository.getById(itemId));
@@ -78,7 +82,7 @@ public class ItemServiceImpl implements ItemService {
         return null;
     }
 
-    @Override
+    @Override//I&T
     public List<ItemDto> searchItems(String text) {
         if (text.equals("")) return new LinkedList<>();
         List<Item> itemList = repository.searchWithParams(text);
@@ -89,7 +93,19 @@ public class ItemServiceImpl implements ItemService {
         return answerList;
     }
 
-    @Override
+    @Override//I&T
+    public List<ItemDto> searchItems(String text,int from,int size) {
+        Pageable uPage = PageRequest.of(from, size, Sort.by("id"));
+        if (text.equals("")) return new LinkedList<>();
+        List<Item> itemList = repository.searchWithParams(text,uPage);
+        List<ItemDto> answerList = new LinkedList<>();
+        for (Item item : itemList) {
+            answerList.add(ItemMapper.toItemDto(item));
+        }
+        return answerList;
+    }
+
+    @Override//I&T
     public List<ItemDto> show(long id) {
         List<ItemDto> answer = new LinkedList<>();
         for (Item item : repository.findAll()) {
@@ -100,30 +116,43 @@ public class ItemServiceImpl implements ItemService {
         return answer.stream().sorted(Comparator.comparing(ItemDto::getId)).collect(Collectors.toList());
     }
 
-    @Override
+    @Override//I&T
+    public Page<Item> show(long id, int from, int size) {
+        Pageable uPage = PageRequest.of(from, size, Sort.by("id"));
+        return repository.findAll(uPage);
+    }
+
+    @Override//I&T
     public Item getItemById(long itemId) {
         if (repository.findById(itemId).isPresent()) {
             return repository.getById(itemId);
         } else throw new NotFoundException("Item with id " + itemId + " is not exist");
     }
 
-    @Override
+    @Override//I&T
     public CommentDto addComment(CommentDto commentDto, long itemId, long userId) {
         Comment comment = CommentMapper.toComment(commentDto, itemId, userId);
         for (Booking booking : BookingController.getBookingService().showAllUserBookings(userId, State.ALL)) {
-            if (booking.getItem().getId() == itemId && booking.getEnd().isBefore(LocalDateTime.now())) {
-                commentRepository.save(comment);
-                return CommentMapper.toCommentDto(commentRepository.getById(comment.getId()));
+            if (booking.getItem().getId() == itemId ){
+                if( booking.getEnd().isBefore(LocalDateTime.now())) {
+                    commentRepository.save(comment);
+                    return CommentMapper.toCommentDto(commentRepository.getById(comment.getId()));
+                }
             }
         }
         throw new WrongDataException("The user can not set comment about the item.");
     }
 
-    @Override
+    @Override//I&T
     public Comment getComment(long itemId) {
         if (commentRepository.findAll().stream().anyMatch(x -> x.getItem().getId() == itemId)) {
             return commentRepository.findAll().stream().filter(x -> x.getItem().getId() == itemId).findFirst().get();
         }
         return null;
+    }
+
+    @Override
+    public void removeItem(long id){
+        repository.delete(getItemById(id));
     }
 }

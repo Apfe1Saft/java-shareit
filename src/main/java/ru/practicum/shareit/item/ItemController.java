@@ -1,10 +1,15 @@
 package ru.practicum.shareit.item;
 
 import lombok.Getter;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.comment.CommentDto;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.exception.WrongDataException;
+import ru.practicum.shareit.requests.ItemRequest;
+import org.springframework.data.domain.PageImpl;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -25,14 +30,24 @@ public class ItemController {
     @PostMapping
     public @Valid ItemDto create(@RequestHeader("X-Sharer-User-Id") String ownerId,
                                  @Valid @RequestBody final ItemDto itemDto) {
+        System.out.println(itemDto);
         if (itemDto.getName() == null) throw new NotFoundException("");
         if (itemDto.getName().equals("") | itemDto.getDescription() == null) throw new WrongDataException("");
         return ItemMapper.toItemDto(itemService.addItem(ItemMapper.toItem(itemDto, Integer.parseInt(ownerId))));
     }
 
     @GetMapping
-    public @Valid List<ItemDto> show(@RequestHeader("X-Sharer-User-Id") String ownerId) {
+    public @Valid List<?> show(@RequestHeader("X-Sharer-User-Id") String ownerId,
+                               @RequestParam(name = "from", defaultValue = "") String from,
+                               @RequestParam(name = "size", defaultValue = "") String size) {
+        if (!size.equals("")) {
+            if(itemService.show(Long.parseLong(ownerId),Integer.parseInt(from),Integer.parseInt(size)).getClass().getSimpleName().equals("PageImpl")){
+                return itemService.show(Long.parseLong(ownerId),Integer.parseInt(from),Integer.parseInt(size)).getContent();
+            }
+            return (List<?>) itemService.show(Long.parseLong(ownerId),Integer.parseInt(from),Integer.parseInt(size));
+        } else{
         return itemService.show(Long.parseLong(ownerId));
+        }
     }
 
     @PatchMapping("/{itemId}")
@@ -51,8 +66,13 @@ public class ItemController {
     }
 
     @GetMapping("/search")
-    public List<ItemDto> search(@RequestParam("text") String text) {
-        return itemService.searchItems(text);
+    public List<? extends Object> search(@RequestParam("text") String text,
+                                @RequestParam(name = "from", defaultValue = "") String from,
+                                @RequestParam(name = "size", defaultValue = "") String size) {
+        if (!size.equals("")) {
+            return itemService.searchItems(text,Integer.parseInt(from),Integer.parseInt(size));
+        } else
+            return itemService.searchItems(text);
     }
 
     @PostMapping("/{itemId}/comment")

@@ -43,7 +43,7 @@ public class BookingController {
         bookingId = new AntPathMatcher().extractPathWithinPattern(request.getAttribute(HandlerMapping.BEST_MATCHING_PATTERN_ATTRIBUTE).toString(), request.getRequestURI());
         bookingService.approval(Long.parseLong(bookingId),
                 Long.parseLong(userId), approval);
-        return getBookingService().getBooking(Long.parseLong(bookingId));
+        return bookingService.getBooking(Long.parseLong(bookingId));
     }
 
     @GetMapping(value = "/{bookingId:[0-9]+}")
@@ -63,8 +63,12 @@ public class BookingController {
 
     @GetMapping(value = "/owner")
     public @Valid List<Booking> getOwnerBookings(@RequestHeader("X-Sharer-User-Id") String userId,
-                                                 @RequestParam(name = "state", defaultValue = "ALL", required = false) String state) {
-        System.out.println("/owner");
+                                                 @RequestParam(name = "state", defaultValue = "ALL", required = false) String state,
+                                                 @RequestParam(name = "from", defaultValue = "") String from,
+                                                 @RequestParam(name = "size", defaultValue = "") String size) {
+        if (!from.equals("") && !size.equals("")) {
+            bookingService.getOwnerBookings(Integer.parseInt(from), Integer.parseInt(size), Long.parseLong(userId));
+        }
         isUserExist(Long.parseLong(userId));
         State newState;
         try {
@@ -75,16 +79,18 @@ public class BookingController {
         return bookingService.showOwnerBookings(Long.parseLong(userId), newState);
     }
 
-
+/*
     @GetMapping("?state={state}")
     public List<Booking> showAllUserBookings(@RequestHeader("X-Sharer-User-Id") String userId,
                                              @RequestParam(name = "state", defaultValue = "ALL") String state) {
         return bookingService.showAllUserBookings(Long.parseLong(userId), State.valueOf(state));
     }
-
-    @GetMapping("")
+*/
+    @GetMapping
     public List<Booking> showAll(@RequestHeader("X-Sharer-User-Id") String userId,
-                                 @RequestParam(name = "state", defaultValue = "ALL") String state) {
+                                 @RequestParam(name = "state", defaultValue = "ALL") String state,
+                                 @RequestParam(name = "from", defaultValue = "") String from,
+                                 @RequestParam(name = "size", defaultValue = "") String size) {
         State newState;
         try {
             newState = State.valueOf(state);
@@ -95,11 +101,13 @@ public class BookingController {
             throw new ValidationException("Wrong");
         }
         List<Booking> answer;
-
-        answer = bookingService.showAll(newState).stream().filter(x -> x.getBooker()
-                .getId() == Long.parseLong(userId)).collect(Collectors.toList());
-
-
+        if (from.equals("") || size.equals("")) {
+            answer = bookingService.showAll(newState).stream().filter(x -> x.getBooker()
+                    .getId() == Long.parseLong(userId)).collect(Collectors.toList());
+        } else {
+            answer = bookingService.showAll(newState, Integer.parseInt(from), Integer.parseInt(size)).stream().filter(x -> x.getBooker()
+                    .getId() == Long.parseLong(userId)).collect(Collectors.toList());
+        }
         Collections.reverse(answer);
         return answer;
     }

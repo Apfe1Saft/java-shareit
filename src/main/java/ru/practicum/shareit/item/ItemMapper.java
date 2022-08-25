@@ -7,11 +7,20 @@ import ru.practicum.shareit.user.UserController;
 
 public class ItemMapper {
     public static ItemDto toItemDto(Item item) {
+        if(item.getRequest()==null){
+            return new ItemDto(
+                    item.getId(),
+                    item.getName(),
+                    item.getDescription(),
+                    item.isAvailable()
+            );
+        }
         return new ItemDto(
                 item.getId(),
                 item.getName(),
                 item.getDescription(),
-                item.isAvailable()
+                item.isAvailable(),
+                item.getRequest().getId()
         );
     }
 
@@ -19,23 +28,41 @@ public class ItemMapper {
         if (itemDto.isAvailable() == null)
             throw new WrongDataException("");
         if (UserController.getUserService().getUser(ownerId).isPresent()) {
-            if (itemDto.getId() == 0) {
-                return new Item(
+            if (itemDto.getRequestId() != 0) {
+                if (itemDto.getId() == 0) {
+                    return new Item(
+                            itemDto.getName(),
+                            itemDto.getDescription(),
+                            itemDto.isAvailable(),
+                            UserController.getUserService().getUser(ownerId).get(),
+                            ItemRequestController.getService().getRequestById(itemDto.getRequestId())
+                    );
+                } else return new Item(
+                        itemDto.getId(),
                         itemDto.getName(),
                         itemDto.getDescription(),
                         itemDto.isAvailable(),
                         UserController.getUserService().getUser(ownerId).get(),
-                        ItemRequestController.getService().getRequestById(itemDto.getItemRequestId())
+                        ItemRequestController.getService().getRequestById(itemDto.getRequestId())
                 );
-            } else return new Item(
-                    itemDto.getId(),
-                    itemDto.getName(),
-                    itemDto.getDescription(),
-                    itemDto.isAvailable(),
-                    UserController.getUserService().getUser(ownerId).get(),
-                    ItemRequestController.getService().getRequestById(itemDto.getItemRequestId())
-            );
+            }else {
+                if (itemDto.getId() == 0) {
+                    return new Item(
+                            itemDto.getName(),
+                            itemDto.getDescription(),
+                            itemDto.isAvailable(),
+                            UserController.getUserService().getUser(ownerId).get()
+                    );
+                } else return new Item(
+                        itemDto.getId(),
+                        itemDto.getName(),
+                        itemDto.getDescription(),
+                        itemDto.isAvailable(),
+                        UserController.getUserService().getUser(ownerId).get()
+                );
+            }
         }
+
         throw new NotFoundException("");
     }
 }

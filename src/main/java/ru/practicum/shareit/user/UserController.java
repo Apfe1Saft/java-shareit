@@ -57,16 +57,18 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public Optional<User> getById(@PathVariable("id") long id) {
+    public User getById(@PathVariable("id") long id) {
         if (userService.getUser(id).isPresent()) {
-            return userService.getUser(id);
+            return userService.getUser(id).get();
         } else throw new NotFoundException("User not exist");
     }
 
     public void userChecker(User user) {
-        if (user.getName() == null) throw new NullParamException("");
+        if (user.getName() == null) throw new NullParamException("NullParamException");
         if (user.getEmail() != null) {
-            if (!user.getEmail().contains("@")) throw new WrongDataException("");
+            if (!user.getEmail().contains("@")) throw new WrongDataException("WrongDataException");
+            return;
         }
+        throw new NullParamException("NullParamException");
     }
 }

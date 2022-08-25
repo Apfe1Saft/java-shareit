@@ -23,7 +23,7 @@ public class ItemDto {
     private BookingDto lastBooking;
     private BookingDto nextBooking;
     private List<CommentDto> comments = new LinkedList<>();
-    private long itemRequestId;
+    private long requestId;
 
     public ItemDto() {
 
@@ -34,6 +34,15 @@ public class ItemDto {
         this.name = name;
         this.description = description;
         this.available = available;
+
+    }
+
+    public ItemDto(long id, String name, String description, Boolean available,long requestId) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.available = available;
+        this.requestId = requestId;
 
     }
 
