@@ -46,7 +46,7 @@ class BookingServiceImplTest {
         Item item = new Item(1, "itemName", "item description", true, user);
         itemService.addItem(item);
         Booking booking = new Booking(LocalDateTime.now(), LocalDateTime.now(), booker, item, Status.APPROVED);
-        assertThat(bookingService.createBooking(booking),equalTo(booking));
+        assertThat(bookingService.createBooking(booking), equalTo(booking));
     }
 
     @Test
@@ -74,7 +74,7 @@ class BookingServiceImplTest {
         itemService.addItem(item);
         Booking booking = new Booking(LocalDateTime.now(), LocalDateTime.now(), booker, item, Status.APPROVED);
         bookingService.createBooking(booking);
-        assertThat(bookingService.getBooking(3),equalTo(booking));
+        assertThat(bookingService.getBooking(3), equalTo(booking));
     }
 
     @Test
@@ -88,7 +88,7 @@ class BookingServiceImplTest {
         itemService.addItem(item);
         Booking booking = new Booking(LocalDateTime.now(), LocalDateTime.now(), booker, item, Status.APPROVED);
         bookingService.createBooking(booking);
-        assertThat(bookingService.showAllUserBookings(8,State.ALL).get(0),equalTo(booking));
+        assertThat(bookingService.showAllUserBookings(8, State.ALL).get(0), equalTo(booking));
     }
 
     @Test
@@ -102,7 +102,7 @@ class BookingServiceImplTest {
         itemService.addItem(item);
         Booking booking = new Booking(LocalDateTime.now(), LocalDateTime.now(), booker, item, Status.APPROVED);
         bookingService.createBooking(booking);
-        assertThat(bookingService.showOwnerBookings(9,State.ALL).get(0),equalTo(booking));
+        assertThat(bookingService.showOwnerBookings(9, State.ALL).get(0), equalTo(booking));
     }
 
     @Test
@@ -116,7 +116,7 @@ class BookingServiceImplTest {
         itemService.addItem(item);
         Booking booking = new Booking(LocalDateTime.now(), LocalDateTime.now(), booker, item, Status.APPROVED);
         bookingService.createBooking(booking);
-        assertThat(bookingService.showAll(State.ALL).get(0),equalTo(booking));
+        assertThat(bookingService.showAll(State.ALL).get(0), equalTo(booking));
     }
 
     @Test
@@ -130,7 +130,7 @@ class BookingServiceImplTest {
         itemService.addItem(item);
         Booking booking = new Booking(LocalDateTime.now(), LocalDateTime.now(), booker, item, Status.APPROVED);
         bookingService.createBooking(booking);
-        assertThat(bookingService.showAll(State.ALL,0,1).get(0),equalTo(booking));
+        assertThat(bookingService.showAll(State.ALL, 0, 1).get(0), equalTo(booking));
     }
 
     @Test
@@ -144,8 +144,8 @@ class BookingServiceImplTest {
         itemService.addItem(item);
         Booking booking = new Booking(LocalDateTime.now(), LocalDateTime.now(), booker, item, Status.APPROVED);
         bookingService.createBooking(booking);
-        assertThat(bookingService.isBookingExist(7),equalTo(false));
-        assertThat(bookingService.isBookingExist(8),equalTo(true));
+        assertThat(bookingService.isBookingExist(7), equalTo(false));
+        assertThat(bookingService.isBookingExist(8), equalTo(true));
     }
 
     @Test
@@ -159,6 +159,6 @@ class BookingServiceImplTest {
         itemService.addItem(item);
         Booking booking = new Booking(LocalDateTime.now(), LocalDateTime.now(), booker, item, Status.APPROVED);
         bookingService.createBooking(booking);
-        assertThat(bookingService.getOwnerBookings(0,1,17).get(0),equalTo(booking));
+        assertThat(bookingService.getOwnerBookings(0, 1, 17).get(0), equalTo(booking));
     }
 }

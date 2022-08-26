@@ -27,4 +27,11 @@ public class BookingDto {
         this.start = start;
         this.end = end;
     }
+    public BookingDto(long id, long itemId,long bookerId, LocalDateTime start, LocalDateTime end) {
+        this.id = id;
+        this.itemId = itemId;
+        this.start = start;
+        this.end = end;
+        this.bookerId = bookerId;
+    }
 }

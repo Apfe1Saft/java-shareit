@@ -1,11 +1,9 @@
 package ru.practicum.shareit.booking;
 
-import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -14,23 +12,16 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.springframework.http.MediaType;
-import ru.practicum.shareit.comment.CommentDto;
-import ru.practicum.shareit.item.*;
+import ru.practicum.shareit.item.Item;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.UserController;
-import ru.practicum.shareit.user.UserDto;
 import ru.practicum.shareit.user.UserService;
 
 import java.nio.charset.StandardCharsets;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.List;
@@ -38,10 +29,12 @@ import java.util.Optional;
 
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
 class BookingControllerTest {
@@ -63,6 +56,7 @@ class BookingControllerTest {
 
     private Booking booking;
     private BookingDto bookingDto;
+
     @BeforeEach
     void setUp() {
         mapper.registerModule(new JavaTimeModule());
@@ -74,7 +68,7 @@ class BookingControllerTest {
     }
 
     @Test
-    void create() throws  Exception{
+    void create() throws Exception {
         when(bookingService.createBooking(booking)).thenReturn(booking);
         try (MockedStatic<BookingMapper> utilities = Mockito.mockStatic(BookingMapper.class)) {
             utilities.when(() -> BookingMapper.toBookingDto(any())).thenReturn(bookingDto);
@@ -94,8 +88,8 @@ class BookingControllerTest {
     }
 
     @Test
-    void approval() throws Exception{
-        doNothing().when(bookingService).approval(anyLong(),anyLong(),anyBoolean());
+    void approval() throws Exception {
+        doNothing().when(bookingService).approval(anyLong(), anyLong(), anyBoolean());
         when(bookingService.getBooking(anyLong())).thenReturn(booking);
         try (MockedStatic<BookingMapper> utilities = Mockito.mockStatic(BookingMapper.class)) {
             utilities.when(() -> BookingMapper.toBookingDto(any())).thenReturn(bookingDto);
@@ -115,7 +109,7 @@ class BookingControllerTest {
     }
 
     @Test
-    void getBooking() throws Exception{
+    void getBooking() throws Exception {
         when(bookingService.getBooking(anyLong())).thenReturn(booking);
         when(bookingService.isBookingExist(anyLong())).thenReturn(true);
         when(userService.getUser(anyLong())).thenReturn(Optional.of(booking.getBooker()));
@@ -133,10 +127,10 @@ class BookingControllerTest {
     }
 
     @Test
-    void getOwnerBookings() throws Exception{
+    void getOwnerBookings() throws Exception {
         List<Booking> bookingList = new LinkedList<>();
         bookingList.add(booking);
-        when(bookingService.showOwnerBookings(anyLong(),any())).thenReturn(bookingList);
+        when(bookingService.showOwnerBookings(anyLong(), any())).thenReturn(bookingList);
         when(bookingService.isBookingExist(anyLong())).thenReturn(true);
         when(userService.getUser(anyLong())).thenReturn(Optional.of(booking.getBooker()));
         try (MockedStatic<UserController> utilities = Mockito.mockStatic(UserController.class)) {
@@ -155,10 +149,10 @@ class BookingControllerTest {
     }
 
     @Test
-    void getOwnerBookingsPageable() throws Exception{
+    void getOwnerBookingsPageable() throws Exception {
         List<Booking> bookingList = new LinkedList<>();
         bookingList.add(booking);
-        when(bookingService.showOwnerBookings(anyLong(),any())).thenReturn(bookingList);
+        when(bookingService.showOwnerBookings(anyLong(), any())).thenReturn(bookingList);
         when(bookingService.isBookingExist(anyLong())).thenReturn(true);
         when(userService.getUser(anyLong())).thenReturn(Optional.of(booking.getBooker()));
         try (MockedStatic<UserController> utilities = Mockito.mockStatic(UserController.class)) {
@@ -175,7 +169,7 @@ class BookingControllerTest {
     }
 
     @Test
-    void showAll() throws Exception{
+    void showAll() throws Exception {
         List<Booking> bookingList = new LinkedList<>();
         bookingList.add(booking);
         when(bookingService.showAll(any())).thenReturn(bookingList);

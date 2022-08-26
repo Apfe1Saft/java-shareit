@@ -17,7 +17,6 @@ import ru.practicum.shareit.user.UserServiceImpl;
 
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -28,7 +27,7 @@ import static org.hamcrest.Matchers.equalTo;
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @SpringJUnitConfig({PersistenceConfig.class, UserServiceImpl.class, ItemServiceImpl.class
-        , UserController.class, BookingServiceImpl.class, BookingController.class,ItemController.class})
+        , UserController.class, BookingServiceImpl.class, BookingController.class, ItemController.class})
 class ItemServiceImplTest {
     private final EntityManager em;
     private final UserService userService;
@@ -110,7 +109,7 @@ class ItemServiceImplTest {
         userService.addUser(user);
         Item item = new Item(8, "itemName", "item description", true, user);
         itemService.addItem(item);
-        assertThat(itemService.searchItems("item",0,2).get(0).getId(),equalTo(8L));
+        assertThat(itemService.searchItems("item", 0, 2).get(0).getId(), equalTo(8L));
 
     }
 
@@ -121,7 +120,7 @@ class ItemServiceImplTest {
         userService.addUser(user);
         Item item = new Item(9, "itemName", "item description", true, user);
         itemService.addItem(item);
-        assertThat(itemService.getItemById(9),equalTo(item));
+        assertThat(itemService.getItemById(9), equalTo(item));
     }
 
     @Test
@@ -133,10 +132,10 @@ class ItemServiceImplTest {
         itemService.addItem(item);
         User userOne = new User(10, "Name", "b@mail.ru");
         userService.addUser(userOne);
-        CommentDto comment = new CommentDto(1,"comment", LocalDate.now(),10,"Mark");
-        bookingService.createBooking(new Booking(LocalDateTime.now(),LocalDateTime.now(),userOne,item, Status.APPROVED));
+        CommentDto comment = new CommentDto(1, "comment", LocalDate.now(), 10, "Mark");
+        bookingService.createBooking(new Booking(LocalDateTime.now(), LocalDateTime.now(), userOne, item, Status.APPROVED));
         Thread.sleep(500);
-        assertThat(itemService.addComment(comment,10,10).getId(),
+        assertThat(itemService.addComment(comment, 10, 10).getId(),
                 equalTo(1L));
     }
 
@@ -149,11 +148,11 @@ class ItemServiceImplTest {
         itemService.addItem(item);
         User userOne = new User(12, "Name", "b@mail.ru");
         userService.addUser(userOne);
-        CommentDto comment = new CommentDto(2,"comment", LocalDate.now(),11,"Mark");
-        bookingService.createBooking(new Booking(LocalDateTime.now(),LocalDateTime.now(),userOne,item, Status.APPROVED));
+        CommentDto comment = new CommentDto(2, "comment", LocalDate.now(), 11, "Mark");
+        bookingService.createBooking(new Booking(LocalDateTime.now(), LocalDateTime.now(), userOne, item, Status.APPROVED));
         Thread.sleep(500);
-        itemService.addComment(comment,11,12);
-        assertThat(itemService.getComment(11).getItem().getId(),equalTo(11L));
+        itemService.addComment(comment, 11, 12);
+        assertThat(itemService.getComment(11).getItem().getId(), equalTo(11L));
     }
 
 }

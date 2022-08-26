@@ -1,8 +1,9 @@
 package ru.practicum.shareit.item;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -11,17 +12,13 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.springframework.http.MediaType;
 import ru.practicum.shareit.comment.CommentDto;
 import ru.practicum.shareit.user.User;
 
 import java.nio.charset.StandardCharsets;
-import java.time.LocalDate;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -169,7 +166,7 @@ class ItemControllerTest {
     void searchPageable() throws Exception {
         List<ItemDto> items = new LinkedList<>();
         items.add(itemDto);
-        when(itemService.searchItems("item",0,1)).thenReturn(items);
+        when(itemService.searchItems("item", 0, 1)).thenReturn(items);
         HttpHeaders headers = new HttpHeaders();
         headers.add("X-Sharer-User-Id", "1");
         mvc.perform(get("/items/search?text=item")
@@ -188,8 +185,8 @@ class ItemControllerTest {
 
     @Test
     void addComment() throws Exception {
-        CommentDto commentDto = new CommentDto(1,"text",1,"Karl");
-        when(itemService.addComment(commentDto,1,1L)).
+        CommentDto commentDto = new CommentDto(1, "text", 1, "Karl");
+        when(itemService.addComment(commentDto, 1, 1L)).
                 thenReturn(commentDto);
         HttpHeaders headers = new HttpHeaders();
         headers.add("X-Sharer-User-Id", "1");

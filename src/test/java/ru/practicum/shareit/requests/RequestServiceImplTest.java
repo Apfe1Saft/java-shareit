@@ -23,6 +23,7 @@ import java.time.LocalDateTime;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+
 @Transactional
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -49,8 +50,8 @@ class RequestServiceImplTest {
         Item item = new Item(1, "itemName", "item description", true, user);
         itemService.addItem(item);
         //Booking booking = new Booking(LocalDateTime.now(), LocalDateTime.now(), booker, item, Status.APPROVED);
-        ItemRequest itemRequest = new ItemRequest(1,"d",booker,LocalDateTime.now());
-        assertThat(requestService.addRequest(1,itemRequest).toString(),
+        ItemRequest itemRequest = new ItemRequest(1, "d", booker, LocalDateTime.now());
+        assertThat(requestService.addRequest(1, itemRequest).toString(),
                 equalTo(itemRequest.toString()));
     }
 
@@ -63,8 +64,8 @@ class RequestServiceImplTest {
         userService.addUser(booker);
         Item item = new Item(2, "itemName", "item description", true, user);
         itemService.addItem(item);
-        ItemRequest itemRequest = new ItemRequest(2,"d",booker,LocalDateTime.now());
-        requestService.addRequest(3,itemRequest);
+        ItemRequest itemRequest = new ItemRequest(2, "d", booker, LocalDateTime.now());
+        requestService.addRequest(3, itemRequest);
         assertThat(requestService.getUserRequests(4).get(0).toString(),
                 equalTo(itemRequest.toString()));
     }
@@ -78,8 +79,8 @@ class RequestServiceImplTest {
         userService.addUser(booker);
         Item item = new Item(3, "itemName", "item description", true, user);
         itemService.addItem(item);
-        ItemRequest itemRequest = new ItemRequest(3,"d",booker,LocalDateTime.now());
-        requestService.addRequest(5,itemRequest);
+        ItemRequest itemRequest = new ItemRequest(3, "d", booker, LocalDateTime.now());
+        requestService.addRequest(5, itemRequest);
         assertThat(requestService.showRequests(6).get(0).toString(),
                 equalTo(itemRequest.toString()));
     }
@@ -93,9 +94,9 @@ class RequestServiceImplTest {
         userService.addUser(booker);
         Item item = new Item(4, "itemName", "item description", true, user);
         itemService.addItem(item);
-        ItemRequest itemRequest = new ItemRequest(4,"d",booker,LocalDateTime.now());
-        requestService.addRequest(7,itemRequest);
-        assertThat(requestService.showRequests(0,1,7).get(0).toString(),
+        ItemRequest itemRequest = new ItemRequest(4, "d", booker, LocalDateTime.now());
+        requestService.addRequest(7, itemRequest);
+        assertThat(requestService.showRequests(0, 1, 7).get(0).toString(),
                 equalTo(itemRequest.toString()));
     }
 
@@ -108,8 +109,8 @@ class RequestServiceImplTest {
         userService.addUser(booker);
         Item item = new Item(5, "itemName", "item description", true, user);
         itemService.addItem(item);
-        ItemRequest itemRequest = new ItemRequest(5,"d",booker,LocalDateTime.now());
-        requestService.addRequest(9,itemRequest);
+        ItemRequest itemRequest = new ItemRequest(5, "d", booker, LocalDateTime.now());
+        requestService.addRequest(9, itemRequest);
         assertThat(requestService.getRequestById(5).toString(),
                 equalTo(itemRequest.toString()));
     }
@@ -123,8 +124,8 @@ class RequestServiceImplTest {
         userService.addUser(booker);
         Item item = new Item(6, "itemName", "item description", true, user);
         itemService.addItem(item);
-        ItemRequest itemRequest = new ItemRequest(6,"d",booker,LocalDateTime.now());
-        requestService.addRequest(11,itemRequest);
+        ItemRequest itemRequest = new ItemRequest(6, "d", booker, LocalDateTime.now());
+        requestService.addRequest(11, itemRequest);
         assertThat(requestService.getAllRequests(11).get(0).toString(),
                 equalTo(itemRequest.toString()));
     }
