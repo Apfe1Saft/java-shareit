@@ -83,7 +83,6 @@
             <version>3.7.0</version>
         </dependency>
     </dependencies>
-
     <profiles>
         <profile>
             <id>check</id>
