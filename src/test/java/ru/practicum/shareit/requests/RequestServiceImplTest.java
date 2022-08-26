@@ -87,7 +87,7 @@ class RequestServiceImplTest {
 
     @Test
     @Order(4)
-    void ShowRequestsPageable() {
+    void showRequestsPageable() {
         User user = new User(7, "Name", "a@mail.ru");
         userService.addUser(user);
         User booker = new User(8, "Name", "b@mail.ru");

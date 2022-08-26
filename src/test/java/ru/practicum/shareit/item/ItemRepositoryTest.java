@@ -46,7 +46,7 @@ class ItemRepositoryTest {
 
     @Test
     @Order(2)
-    void SearchWithParamsPageable() {
+    void searchWithParamsPageable() {
         User user = new User(2, "Name", "qwerty@mail.ru");
         userService.addUser(user);
         Item item = new Item(2, "itemName", "item description", true, user);

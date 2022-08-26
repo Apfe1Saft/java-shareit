@@ -26,8 +26,7 @@ import static org.hamcrest.Matchers.equalTo;
 @Transactional
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-@SpringJUnitConfig({PersistenceConfig.class, UserServiceImpl.class, ItemServiceImpl.class
-        , UserController.class, BookingServiceImpl.class, BookingController.class, ItemController.class})
+@SpringJUnitConfig({PersistenceConfig.class, UserServiceImpl.class, ItemServiceImpl.class, UserController.class, BookingServiceImpl.class, BookingController.class, ItemController.class})
 class ItemServiceImplTest {
     private final EntityManager em;
     private final UserService userService;

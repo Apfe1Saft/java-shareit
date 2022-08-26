@@ -121,7 +121,7 @@ class BookingServiceImplTest {
 
     @Test
     @Order(7)
-    void ShowAllPageable() {
+    void showAllPageable() {
         User user = new User(13, "Name", "a@mail.ru");
         userService.addUser(user);
         User booker = new User(14, "Name", "b@mail.ru");
