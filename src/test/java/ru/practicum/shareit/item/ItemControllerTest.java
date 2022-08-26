@@ -186,8 +186,8 @@ class ItemControllerTest {
     @Test
     void addComment() throws Exception {
         CommentDto commentDto = new CommentDto(1, "text", 1, "Karl");
-        when(itemService.addComment(commentDto, 1, 1L)).
-                thenReturn(commentDto);
+        when(itemService.addComment(commentDto, 1, 1L))
+                .thenReturn(commentDto);
         HttpHeaders headers = new HttpHeaders();
         headers.add("X-Sharer-User-Id", "1");
         mvc.perform(post("/items/1/comment")
