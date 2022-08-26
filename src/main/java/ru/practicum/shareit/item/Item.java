@@ -48,9 +48,9 @@ public class Item {
     private long requestId;
 
     @PostLoad
-    public void loadRequestId(){
-        if(request!=null)
-        requestId = request.getId();
+    public void loadRequestId() {
+        if (request != null)
+            requestId = request.getId();
     }
 
     public Item(long id, String name, String description, boolean available, User owner) {
@@ -69,7 +69,7 @@ public class Item {
     }
 
     public Item(String name, String description, boolean available, User owner, ItemRequest request) {
-        System.out.println("::::::::::::::::::> "+request);
+        System.out.println("::::::::::::::::::> " + request);
         this.name = name;
         this.description = description;
         this.available = available;
@@ -79,7 +79,7 @@ public class Item {
     }
 
     public Item(long id, String name, String description, Boolean available, User user, ItemRequest request) {
-        System.out.println("::::::::::::::::::> "+request);
+        System.out.println("::::::::::::::::::> " + request);
         this.id = id;
         this.name = name;
         this.description = description;

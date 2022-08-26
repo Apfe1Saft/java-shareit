@@ -3,7 +3,6 @@ package ru.practicum.shareit.user;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import ru.practicum.shareit.exception.NotFoundException;
 
 import java.util.List;
 import java.util.Optional;

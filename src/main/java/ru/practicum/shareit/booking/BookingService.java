@@ -13,7 +13,7 @@ public interface BookingService {
 
     List<Booking> showOwnerBookings(long userId, State state);
 
-    List<Booking> showAll(State state,int from, int size);
+    List<Booking> showAll(State state, int from, int size);
 
     List<Booking> showAll(State state);
 

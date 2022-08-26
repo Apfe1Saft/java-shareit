@@ -21,6 +21,7 @@ public class CommentDto {
         this.authorName = name;
         this.itemId = itemId;
     }
+
     public CommentDto(long id, String text, long itemId, String name) {
         this.id = id;
         this.text = text;

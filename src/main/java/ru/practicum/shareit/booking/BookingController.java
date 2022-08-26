@@ -79,13 +79,13 @@ public class BookingController {
         return bookingService.showOwnerBookings(Long.parseLong(userId), newState);
     }
 
-/*
-    @GetMapping("?state={state}")
-    public List<Booking> showAllUserBookings(@RequestHeader("X-Sharer-User-Id") String userId,
-                                             @RequestParam(name = "state", defaultValue = "ALL") String state) {
-        return bookingService.showAllUserBookings(Long.parseLong(userId), State.valueOf(state));
-    }
-*/
+    /*
+        @GetMapping("?state={state}")
+        public List<Booking> showAllUserBookings(@RequestHeader("X-Sharer-User-Id") String userId,
+                                                 @RequestParam(name = "state", defaultValue = "ALL") String state) {
+            return bookingService.showAllUserBookings(Long.parseLong(userId), State.valueOf(state));
+        }
+    */
     @GetMapping
     public List<Booking> showAll(@RequestHeader("X-Sharer-User-Id") String userId,
                                  @RequestParam(name = "state", defaultValue = "ALL") String state,

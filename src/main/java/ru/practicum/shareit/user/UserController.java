@@ -10,7 +10,6 @@ import ru.practicum.shareit.exception.WrongDataException;
 
 import javax.validation.Valid;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * // TODO .

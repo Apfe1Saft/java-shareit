@@ -6,11 +6,9 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import ru.practicum.shareit.item.Item;
-import ru.practicum.shareit.item.ItemDto;
 import ru.practicum.shareit.user.User;
 
 import javax.persistence.*;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.List;
@@ -41,12 +39,12 @@ public class ItemRequest {
     private LocalDateTime created = LocalDateTime.now();
 
     @JsonManagedReference
-    @OneToMany(fetch = FetchType.LAZY,mappedBy = "request",cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "request", cascade = CascadeType.ALL)
     @JsonIgnoreProperties(value = {"applications", "hibernateLazyInitializer"})
     private List<Item> items = new LinkedList<>();
 
 
-    public ItemRequest(long id,String description,User requestor,LocalDateTime created) {
+    public ItemRequest(long id, String description, User requestor, LocalDateTime created) {
         this.id = id;
         this.description = description;
         this.requestor = requestor;

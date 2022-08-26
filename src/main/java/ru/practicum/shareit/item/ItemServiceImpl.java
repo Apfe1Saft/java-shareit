@@ -94,10 +94,10 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override//I&T
-    public List<ItemDto> searchItems(String text,int from,int size) {
+    public List<ItemDto> searchItems(String text, int from, int size) {
         Pageable uPage = PageRequest.of(from, size, Sort.by("id"));
         if (text.equals("")) return new LinkedList<>();
-        List<Item> itemList = repository.searchWithParams(text,uPage);
+        List<Item> itemList = repository.searchWithParams(text, uPage);
         List<ItemDto> answerList = new LinkedList<>();
         for (Item item : itemList) {
             answerList.add(ItemMapper.toItemDto(item));
@@ -133,8 +133,8 @@ public class ItemServiceImpl implements ItemService {
     public CommentDto addComment(CommentDto commentDto, long itemId, long userId) {
         Comment comment = CommentMapper.toComment(commentDto, itemId, userId);
         for (Booking booking : BookingController.getBookingService().showAllUserBookings(userId, State.ALL)) {
-            if (booking.getItem().getId() == itemId ){
-                if( booking.getEnd().isBefore(LocalDateTime.now())) {
+            if (booking.getItem().getId() == itemId) {
+                if (booking.getEnd().isBefore(LocalDateTime.now())) {
                     commentRepository.save(comment);
                     return CommentMapper.toCommentDto(commentRepository.getById(comment.getId()));
                 }
@@ -152,7 +152,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public void removeItem(long id){
+    public void removeItem(long id) {
         repository.delete(getItemById(id));
     }
 }

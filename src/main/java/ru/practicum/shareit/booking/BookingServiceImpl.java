@@ -71,6 +71,7 @@ public class BookingServiceImpl implements BookingService {
         Collections.reverse(listOfBooking);
         return listOfBooking;
     }
+
     @Override//I&T
     public List<Booking> showAll(State state) {
         switch (state) {
@@ -104,7 +105,7 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override//I&T
-    public List<Booking> showAll(State state,int firstPage,int size) {
+    public List<Booking> showAll(State state, int firstPage, int size) {
         Pageable uPage = PageRequest.of(firstPage, size, Sort.by("start"));
         switch (state) {
             case ALL:
@@ -150,7 +151,7 @@ public class BookingServiceImpl implements BookingService {
             throw new WrongDataException("");
         }
         Pageable uPage = PageRequest.of(firstPage, size, Sort.by("start"));
-        return repository.getOwnerBookings(userId,uPage);
+        return repository.getOwnerBookings(userId, uPage);
     }
 
 

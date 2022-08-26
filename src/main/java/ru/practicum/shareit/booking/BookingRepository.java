@@ -9,6 +9,7 @@ import java.util.List;
 
 public interface BookingRepository extends JpaRepository<Booking, Long> {
     List<Booking> findByBookerId(Long ownerId, Pageable pageable);
+
     @Query(
             " select i from Booking i " +
                     "where i.booker.id!= :ownerId"

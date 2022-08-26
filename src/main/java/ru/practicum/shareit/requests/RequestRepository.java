@@ -7,7 +7,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
-public interface RequestRepository  extends JpaRepository<ItemRequest, Long> {
+public interface RequestRepository extends JpaRepository<ItemRequest, Long> {
     @Query(
             " select i from ItemRequest i " +
                     "where i.requestor.id!= :ownerId"

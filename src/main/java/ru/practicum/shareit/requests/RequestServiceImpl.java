@@ -40,12 +40,12 @@ public class RequestServiceImpl implements RequestService {
             throw new WrongDataException("");
         }
         Pageable uPage = PageRequest.of(firstPage, size, Sort.by("created"));
-        return repository.findNotUserRequests(userId,uPage);
+        return repository.findNotUserRequests(userId, uPage);
     }
 
     @Override//I&T
     public List<ItemRequest> showRequests(long userId) {
-        return repository.findAll().stream().filter(x->x.getRequestor().getId()==userId).
+        return repository.findAll().stream().filter(x -> x.getRequestor().getId() == userId).
                 collect(Collectors.toList());
     }
 

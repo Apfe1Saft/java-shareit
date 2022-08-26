@@ -7,7 +7,7 @@ import ru.practicum.shareit.user.UserController;
 
 public class ItemMapper {
     public static ItemDto toItemDto(Item item) {
-        if(item.getRequest()==null){
+        if (item.getRequest() == null) {
             return new ItemDto(
                     item.getId(),
                     item.getName(),
@@ -45,7 +45,7 @@ public class ItemMapper {
                         UserController.getUserService().getUser(ownerId).get(),
                         ItemRequestController.getService().getRequestById(itemDto.getRequestId())
                 );
-            }else {
+            } else {
                 if (itemDto.getId() == 0) {
                     return new Item(
                             itemDto.getName(),

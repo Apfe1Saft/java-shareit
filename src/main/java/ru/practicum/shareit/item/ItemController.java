@@ -1,15 +1,10 @@
 package ru.practicum.shareit.item;
 
 import lombok.Getter;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.comment.CommentDto;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.exception.WrongDataException;
-import ru.practicum.shareit.requests.ItemRequest;
-import org.springframework.data.domain.PageImpl;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -41,12 +36,12 @@ public class ItemController {
                                @RequestParam(name = "from", defaultValue = "") String from,
                                @RequestParam(name = "size", defaultValue = "") String size) {
         if (!size.equals("")) {
-            if(itemService.show(Long.parseLong(ownerId),Integer.parseInt(from),Integer.parseInt(size)).getClass().getSimpleName().equals("PageImpl")){
-                return itemService.show(Long.parseLong(ownerId),Integer.parseInt(from),Integer.parseInt(size)).getContent();
+            if (itemService.show(Long.parseLong(ownerId), Integer.parseInt(from), Integer.parseInt(size)).getClass().getSimpleName().equals("PageImpl")) {
+                return itemService.show(Long.parseLong(ownerId), Integer.parseInt(from), Integer.parseInt(size)).getContent();
             }
-            return (List<?>) itemService.show(Long.parseLong(ownerId),Integer.parseInt(from),Integer.parseInt(size));
-        } else{
-        return itemService.show(Long.parseLong(ownerId));
+            return (List<?>) itemService.show(Long.parseLong(ownerId), Integer.parseInt(from), Integer.parseInt(size));
+        } else {
+            return itemService.show(Long.parseLong(ownerId));
         }
     }
 
@@ -67,10 +62,10 @@ public class ItemController {
 
     @GetMapping("/search")
     public List<? extends Object> search(@RequestParam("text") String text,
-                                @RequestParam(name = "from", defaultValue = "") String from,
-                                @RequestParam(name = "size", defaultValue = "") String size) {
+                                         @RequestParam(name = "from", defaultValue = "") String from,
+                                         @RequestParam(name = "size", defaultValue = "") String size) {
         if (!size.equals("")) {
-            return itemService.searchItems(text,Integer.parseInt(from),Integer.parseInt(size));
+            return itemService.searchItems(text, Integer.parseInt(from), Integer.parseInt(size));
         } else
             return itemService.searchItems(text);
     }
