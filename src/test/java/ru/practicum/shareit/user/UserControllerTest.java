@@ -78,8 +78,8 @@ class UserControllerTest {
     void put() throws Exception {
         when(userService.update(any())).thenReturn(users.get(0));
 
-        mvc.perform(MockMvcRequestBuilders.put("/users").
-                content(mapper.writeValueAsString(new UserDto(1, "name", "a@email.ru")))
+        mvc.perform(MockMvcRequestBuilders.put("/users")
+                .content(mapper.writeValueAsString(new UserDto(1, "name", "a@email.ru")))
                 .characterEncoding(StandardCharsets.UTF_8)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))
@@ -93,8 +93,8 @@ class UserControllerTest {
     void update() throws Exception {
         when(userService.update(any())).thenReturn(users.get(0));
 
-        mvc.perform(MockMvcRequestBuilders.patch("/users/1").
-                content(mapper.writeValueAsString(new UserDto(1, "name", "a@email.ru")))
+        mvc.perform(MockMvcRequestBuilders.patch("/users/1")
+                .content(mapper.writeValueAsString(new UserDto(1, "name", "a@email.ru")))
                 .characterEncoding(StandardCharsets.UTF_8)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))

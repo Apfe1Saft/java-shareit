@@ -27,8 +27,8 @@ public class RequestServiceImpl implements RequestService {
 
     @Override//I&T
     public List<ItemRequest> getUserRequests(long userId) {
-        return repository.findAll().stream().filter(x -> x.getRequestor().getId() == userId).
-                collect(Collectors.toList());
+        return repository.findAll().stream().filter(x -> x.getRequestor().getId() == userId)
+                .collect(Collectors.toList());
     }
 
     @Override//I&T
@@ -45,8 +45,8 @@ public class RequestServiceImpl implements RequestService {
 
     @Override//I&T
     public List<ItemRequest> showRequests(long userId) {
-        return repository.findAll().stream().filter(x -> x.getRequestor().getId() == userId).
-                collect(Collectors.toList());
+        return repository.findAll().stream().filter(x -> x.getRequestor().getId() == userId)
+                .collect(Collectors.toList());
     }
 
     @Override//I&T
@@ -59,7 +59,7 @@ public class RequestServiceImpl implements RequestService {
 
     @Override//I&T
     public List<ItemRequest> getAllRequests(long ownerId) {
-        return repository.findAll().stream().filter(x -> x.getRequestor().getId() != ownerId).
-                collect(Collectors.toList());
+        return repository.findAll().stream().filter(x -> x.getRequestor().getId() != ownerId)
+                .collect(Collectors.toList());
     }
 }
