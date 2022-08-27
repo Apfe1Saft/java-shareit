@@ -90,8 +90,7 @@ class BookingControllerTest {
         // when + then
         mockMvc.perform(post("/bookings")
                 .header("X-Sharer-User-Id", userId)
-                .content(String.format("{\"itemId\": %s,\"start\": \"%s\", \"end\":\"%s\"}", itemId
-                        , LocalDateTime.now().plusDays(1), LocalDateTime.now().plusDays(2)))
+                .content(String.format("{\"itemId\": %s,\"start\": \"%s\", \"end\":\"%s\"}", itemId, LocalDateTime.now().plusDays(1), LocalDateTime.now().plusDays(2)))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(bookingDto.getId()));
