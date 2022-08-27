@@ -1,11 +1,11 @@
 package ru.practicum.shareit.requests;
 
-import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.exception.ValidationException;
-import ru.practicum.shareit.user.UserController;
+import ru.practicum.shareit.user.UserService;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -15,22 +15,20 @@ import java.util.List;
  */
 @Validated
 @RestController
+@RequiredArgsConstructor
 @RequestMapping(path = "/requests")
 @Slf4j
 public class ItemRequestController {
-    @Getter
-    private static RequestService service;
 
-    public ItemRequestController(RequestService service) {
-        ItemRequestController.service = service;
-    }
+    private final RequestService service;
+    private final UserService userService;
 
     @PostMapping
     public @Valid ItemRequest addRequest(@RequestHeader("X-Sharer-User-Id") String ownerId, @Valid @RequestBody ItemRequest request) {
         System.out.println("addRequest");
         System.out.println(request);
-        if (UserController.getUserService().getUser(Long.parseLong(ownerId)).isPresent()) {
-            request.setRequestor(UserController.getUserService().getUser(Long.parseLong(ownerId)).get());
+        if (userService.getUser(Long.parseLong(ownerId)).isPresent()) {
+            request.setRequestor(userService.getUser(Long.parseLong(ownerId)).get());
             return service.addRequest(Long.parseLong(ownerId), request);
         }
         throw new ValidationException("");
@@ -39,7 +37,7 @@ public class ItemRequestController {
     @GetMapping
     public @Valid List<ItemRequest> getUserRequests(@RequestHeader("X-Sharer-User-Id") String ownerId) {
         System.out.println("getUserRequests");
-        if (UserController.getUserService().getUser(Long.parseLong(ownerId)).isPresent()) {
+        if (userService.getUser(Long.parseLong(ownerId)).isPresent()) {
             return service.getUserRequests(Long.parseLong(ownerId));
         }
         throw new ValidationException("");
@@ -49,7 +47,7 @@ public class ItemRequestController {
     public @Valid List<ItemRequest> showRequests(@RequestHeader("X-Sharer-User-Id") String ownerId,
                                                  @RequestParam(name = "from", defaultValue = "") String from,
                                                  @RequestParam(name = "size", defaultValue = "") String size) {
-        if (UserController.getUserService().getUser(Long.parseLong(ownerId)).isPresent()) {
+        if (userService.getUser(Long.parseLong(ownerId)).isPresent()) {
             if (from.equals("") || size.equals("")) {
                 return service.showRequests(Long.parseLong(ownerId));
             } else {
@@ -62,7 +60,7 @@ public class ItemRequestController {
     @GetMapping("/{requestId}")
     public @Valid ItemRequest getRequest(@RequestHeader("X-Sharer-User-Id") String ownerId, @PathVariable("requestId") long id) {
         System.out.println("getRequest");
-        if (UserController.getUserService().getUser(Long.parseLong(ownerId)).isPresent()) {
+        if (userService.getUser(Long.parseLong(ownerId)).isPresent()) {
             return service.getRequestById(id);
         }
         throw new ValidationException("");

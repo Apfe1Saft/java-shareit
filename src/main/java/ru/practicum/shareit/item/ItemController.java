@@ -1,6 +1,6 @@
 package ru.practicum.shareit.item;
 
-import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.comment.CommentDto;
 import ru.practicum.shareit.exception.NotFoundException;
@@ -13,22 +13,19 @@ import java.util.List;
  * // TODO .
  */
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/items")
 public class ItemController {
-    @Getter
-    private static ItemService itemService;
 
-    public ItemController(ItemService service) {
-        itemService = service;
-    }
+    private final ItemService itemService;
 
     @PostMapping
     public @Valid ItemDto create(@RequestHeader("X-Sharer-User-Id") String ownerId,
                                  @Valid @RequestBody final ItemDto itemDto) {
         System.out.println(itemDto);
         if (itemDto.getName() == null) throw new NotFoundException("");
-        if (itemDto.getName().equals("") | itemDto.getDescription() == null) throw new WrongDataException("");
-        return ItemMapper.toItemDto(itemService.addItem(ItemMapper.toItem(itemDto, Integer.parseInt(ownerId))));
+        if (itemDto.getName().equals("") || itemDto.getDescription() == null) throw new WrongDataException("");
+        return itemService.addItem(itemDto, Long.parseLong(ownerId));
     }
 
     @GetMapping
@@ -49,7 +46,7 @@ public class ItemController {
     public @Valid ItemDto update(@PathVariable("itemId") long itemId,
                                  @RequestHeader("X-Sharer-User-Id") String ownerId,
                                  @Valid @RequestBody final ItemDto itemDto) {
-        return ItemMapper.toItemDto(itemService.updateItem(itemDto, Long.parseLong(ownerId), itemId));
+        return itemService.updateItem(itemDto, Long.parseLong(ownerId), itemId);
     }
 
     @GetMapping("/{id}")

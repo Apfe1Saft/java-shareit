@@ -1,49 +1,51 @@
 package ru.practicum.shareit.booking;
 
-import lombok.RequiredArgsConstructor;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
-import ru.practicum.shareit.config.PersistenceConfig;
-import ru.practicum.shareit.item.Item;
-import ru.practicum.shareit.item.ItemController;
-import ru.practicum.shareit.item.ItemService;
-import ru.practicum.shareit.item.ItemServiceImpl;
-import ru.practicum.shareit.user.User;
-import ru.practicum.shareit.user.UserController;
-import ru.practicum.shareit.user.UserService;
-import ru.practicum.shareit.user.UserServiceImpl;
 
-import javax.transaction.Transactional;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.springframework.test.context.TestPropertySource;
+import ru.practicum.shareit.item.Item;
+import ru.practicum.shareit.user.User;
+
 import java.time.LocalDateTime;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-
-@Transactional
-@RequiredArgsConstructor(onConstructor_ = @Autowired)
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-@SpringJUnitConfig({PersistenceConfig.class, UserServiceImpl.class,
-        ItemServiceImpl.class, UserController.class, ItemController.class})
+@TestPropertySource(properties = {"db.name=booking_test"})
 class BookingMapperTest {
-    private final UserService userService;
-    private final ItemService itemService;
 
     @Test
     void toBookingDto() {
-        User user = new User(2, "Name", "qwerty@mail.ru");
-        userService.addUser(user);
-        Item item = new Item(1, "itemName", "item description", true, user);
-        itemService.addItem(item);
-        Booking booking = new Booking(LocalDateTime.now(), LocalDateTime.now(), user, item, Status.APPROVED);
-        assertThat(BookingMapper.toBookingDto(booking).getId(),
-                equalTo(0L));
-        assertThat(BookingMapper.toBookingDto(booking).getBookerId(),
-                equalTo(0L));
-        assertThat(BookingMapper.toBookingDto(booking).getItemId(),
-                equalTo(1L));
+        var item = new Item();
+        item.setId(3L);
+        item.setName("Tool");
+        var user = new User();
+        user.setId(2L);
+        user.setName("Test");
+        var original = new Booking();
+        original.setId(1L);
+        original.setStatus(Status.APPROVED);
+        original.setStart(LocalDateTime.now());
+        original.setEnd(LocalDateTime.now());
+        original.setBooker(user);
+        original.setItem(item);
+        var result = BookingMapper.toBookingDto(original);
+        Assertions.assertNotNull(result);
+        Assertions.assertEquals(original.getId(), result.getId());
+        Assertions.assertEquals(original.getStart(), result.getStart());
+        Assertions.assertEquals(original.getEnd(), result.getEnd());
     }
 
+    @Test
+    void toBooking() {
+        var item = new Item();
+        item.setId(3L);
+        item.setName("Tool");
+        var user = new User();
+        user.setId(2L);
+        user.setName("Test");
+        var original = new BookingDto(1L, item.getId(), LocalDateTime.now(), LocalDateTime.now());
+        var result = BookingMapper.toBooking(original, user, item);
+        Assertions.assertNotNull(result);
+        Assertions.assertNotNull(result.getItem());
+        Assertions.assertNotNull(result.getBooker());
+    }
 }

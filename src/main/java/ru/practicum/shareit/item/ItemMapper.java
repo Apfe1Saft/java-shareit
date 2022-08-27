@@ -2,8 +2,10 @@ package ru.practicum.shareit.item;
 
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.exception.WrongDataException;
-import ru.practicum.shareit.requests.ItemRequestController;
-import ru.practicum.shareit.user.UserController;
+import ru.practicum.shareit.requests.ItemRequest;
+import ru.practicum.shareit.user.User;
+
+import java.util.Objects;
 
 public class ItemMapper {
     public static ItemDto toItemDto(Item item) {
@@ -24,26 +26,26 @@ public class ItemMapper {
         );
     }
 
-    public static Item toItem(ItemDto itemDto, long ownerId) {
+    public static Item toItem(ItemDto itemDto, User owner, ItemRequest itemRequest) {
         if (itemDto.isAvailable() == null)
             throw new WrongDataException("");
-        if (UserController.getUserService().getUser(ownerId).isPresent()) {
+        if (Objects.nonNull(owner)) {
             if (itemDto.getRequestId() != 0) {
                 if (itemDto.getId() == 0) {
                     return new Item(
                             itemDto.getName(),
                             itemDto.getDescription(),
                             itemDto.isAvailable(),
-                            UserController.getUserService().getUser(ownerId).get(),
-                            ItemRequestController.getService().getRequestById(itemDto.getRequestId())
+                            owner,
+                            itemRequest
                     );
                 } else return new Item(
                         itemDto.getId(),
                         itemDto.getName(),
                         itemDto.getDescription(),
                         itemDto.isAvailable(),
-                        UserController.getUserService().getUser(ownerId).get(),
-                        ItemRequestController.getService().getRequestById(itemDto.getRequestId())
+                        owner,
+                        itemRequest
                 );
             } else {
                 if (itemDto.getId() == 0) {
@@ -51,14 +53,14 @@ public class ItemMapper {
                             itemDto.getName(),
                             itemDto.getDescription(),
                             itemDto.isAvailable(),
-                            UserController.getUserService().getUser(ownerId).get()
+                            owner
                     );
                 } else return new Item(
                         itemDto.getId(),
                         itemDto.getName(),
                         itemDto.getDescription(),
                         itemDto.isAvailable(),
-                        UserController.getUserService().getUser(ownerId).get()
+                        owner
                 );
             }
         }

@@ -1,15 +1,18 @@
 package ru.practicum.shareit.comment;
 
-import ru.practicum.shareit.item.ItemController;
-import ru.practicum.shareit.user.UserController;
+import org.springframework.stereotype.Component;
+import ru.practicum.shareit.item.Item;
+import ru.practicum.shareit.user.User;
 
+@Component
 public class CommentMapper {
-    public static Comment toComment(CommentDto commentDto, long itemId, long userid) {
+
+    public static Comment toComment(CommentDto commentDto, Item item, User user) {
         return new Comment(
                 commentDto.getId(),
                 commentDto.getText(),
-                ItemController.getItemService().getItemById(itemId),
-                UserController.getUserService().getUser(userid).get(),
+                item,
+                user,
                 commentDto.getCreated()
         );
 
@@ -21,7 +24,7 @@ public class CommentMapper {
                 comment.getText(),
                 comment.getCreated(),
                 comment.getItem().getId(),
-                UserController.getUserService().getUser(comment.getAuthor().getId()).get().getName()
+                comment.getAuthor().getName()
         );
     }
 }

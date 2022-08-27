@@ -1,12 +1,12 @@
 package ru.practicum.shareit.booking;
 
-import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.HandlerMapping;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.exception.ValidationException;
-import ru.practicum.shareit.user.UserController;
+import ru.practicum.shareit.user.UserService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -20,43 +20,38 @@ import java.util.stream.Collectors;
  */
 //
 @RestController
+@RequiredArgsConstructor
 @RequestMapping(path = "/bookings")
 public class BookingController {
-    @Getter
-    private static BookingService bookingService;
 
-    public BookingController(BookingService bookingService) {
-        BookingController.bookingService = bookingService;
-    }
+    private final BookingService bookingService;
+    private final UserService userService;
 
     @PostMapping
     public @Valid BookingDto create(@Valid @RequestBody final BookingDto bookingDto,
                                     @RequestHeader("X-Sharer-User-Id") String userId) {
-        return BookingMapper.toBookingDto(
-                bookingService.createBooking(BookingMapper.toBooking(bookingDto, Long.parseLong(userId)))
-        );
+        return bookingService.createBooking(bookingDto, Long.parseLong(userId));
     }
 
     @PatchMapping("/{bookingId}?")
-    public Booking approval(@RequestHeader("X-Sharer-User-Id") String userId,
-                            @RequestParam("approved") boolean approval, @PathVariable("bookingId") String bookingId, HttpServletRequest request) {
+    public BookingDto approval(@RequestHeader("X-Sharer-User-Id") String userId,
+                               @RequestParam("approved") boolean approval, @PathVariable("bookingId") String bookingId, HttpServletRequest request) {
         bookingId = new AntPathMatcher().extractPathWithinPattern(request.getAttribute(HandlerMapping.BEST_MATCHING_PATTERN_ATTRIBUTE).toString(), request.getRequestURI());
         bookingService.approval(Long.parseLong(bookingId),
                 Long.parseLong(userId), approval);
-        return bookingService.getBooking(Long.parseLong(bookingId));
+        return bookingService.getBookingDto(Long.parseLong(bookingId));
     }
 
     @GetMapping(value = "/{bookingId:[0-9]+}")
-    public @Valid Booking getBooking(@RequestHeader("X-Sharer-User-Id") String userId, @PathVariable("bookingId") long bookingId) {
+    public @Valid BookingDto getBooking(@RequestHeader("X-Sharer-User-Id") String userId, @PathVariable("bookingId") long bookingId) {
         System.out.println("getBooking");
         if (!bookingService.isBookingExist(bookingId)) {
             throw new NotFoundException("Booking is not exist.");
         }
         isUserExist(Long.parseLong(userId));
-        if (bookingService.getBooking(bookingId).getBooker().getId() == Long.parseLong(userId) ||
-                bookingService.getBooking(bookingId).getItem().getOwner().getId() == Long.parseLong(userId)) {
+        if (bookingService.getBookingDto(bookingId).getBookerId() == Long.parseLong(userId)) {
             System.out.println("WORK");
-            return bookingService.getBooking(bookingId);
+            return bookingService.getBookingDto(bookingId);
         }
         throw new NotFoundException("User is not the creator of the booking or owner of the item.");
     }
@@ -97,7 +92,7 @@ public class BookingController {
         } catch (IllegalArgumentException e) {
             throw new ValidationException("Unknown state: UNSUPPORTED_STATUS");
         }
-        if (UserController.getUserService().getUser(Long.parseLong(userId)).isEmpty()) {
+        if (userService.getUser(Long.parseLong(userId)).isEmpty()) {
             throw new ValidationException("Wrong");
         }
         List<Booking> answer;
@@ -113,7 +108,7 @@ public class BookingController {
     }
 
     public void isUserExist(long userId) {
-        if (UserController.getUserService().getUser(userId).isEmpty()) {
+        if (userService.getUser(userId).isEmpty()) {
             throw new ValidationException("Wrong");
         }
     }

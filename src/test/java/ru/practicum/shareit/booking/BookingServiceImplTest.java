@@ -1,65 +1,75 @@
 package ru.practicum.shareit.booking;
 
-import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
-import ru.practicum.shareit.config.PersistenceConfig;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.TestPropertySource;
 import ru.practicum.shareit.item.Item;
-import ru.practicum.shareit.item.ItemService;
-import ru.practicum.shareit.item.ItemServiceImpl;
+import ru.practicum.shareit.item.ItemRepository;
+import ru.practicum.shareit.requests.ItemRequest;
+import ru.practicum.shareit.requests.RequestRepository;
+import ru.practicum.shareit.requests.RequestService;
 import ru.practicum.shareit.user.User;
-import ru.practicum.shareit.user.UserService;
-import ru.practicum.shareit.user.UserServiceImpl;
+import ru.practicum.shareit.user.UserRepository;
 
-import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 
+@SpringBootTest
+@TestPropertySource(properties = {"db.name=booking_test"})
 @Transactional
-@RequiredArgsConstructor(onConstructor_ = @Autowired)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-@SpringJUnitConfig({PersistenceConfig.class,
-        UserServiceImpl.class,
-        ItemServiceImpl.class,
-        BookingServiceImpl.class,
-})
 class BookingServiceImplTest {
-    private final EntityManager em;
-    private final UserService userService;
-    private final ItemService itemService;
-    private final BookingService bookingService;
+
+    @Autowired
+    private BookingService bookingService;
+    @Autowired
+    private RequestService requestService;
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private ItemRepository itemRepository;
+    @Autowired
+    private RequestRepository requestRepository;
+    @Autowired
+    private BookingRepository bookingRepository;
 
     @Test
     @Order(1)
-    void createBooking() throws InterruptedException {
+    void createBooking() {
         User user = new User(1, "Name", "a@mail.ru");
-        userService.addUser(user);
+        userRepository.save(user);
         User booker = new User(2, "Name", "b@mail.ru");
-        userService.addUser(booker);
+        userRepository.save(booker);
+        ItemRequest request = new ItemRequest(1L, "", booker, LocalDateTime.now());
+        requestRepository.save(request);
         Item item = new Item(1, "itemName", "item description", true, user);
-        itemService.addItem(item);
+        item.setRequest(request);
+        itemRepository.save(item);
         Booking booking = new Booking(LocalDateTime.now(), LocalDateTime.now(), booker, item, Status.APPROVED);
-        assertThat(bookingService.createBooking(booking), equalTo(booking));
+        BookingDto bookingDto = BookingMapper.toBookingDto(booking);
+        assertThat(bookingService.createBooking(bookingDto, booker.getId()).getItemId(),
+                equalTo(BookingMapper.toBookingDto(booking).getItemId()));
     }
 
     @Test
     @Order(2)
     void approval() {
         User user = new User(3, "Name", "a@mail.ru");
-        userService.addUser(user);
+        userRepository.save(user);
         User booker = new User(4, "Name", "b@mail.ru");
-        userService.addUser(booker);
+        userRepository.save(booker);
         Item item = new Item(2, "itemName", "item description", true, user);
-        itemService.addItem(item);
+        itemRepository.save(item);
         Booking booking = new Booking(LocalDateTime.now(), LocalDateTime.now(), booker, item, Status.APPROVED);
-        bookingService.createBooking(booking);
+        BookingDto bookingDto = BookingMapper.toBookingDto(booking);
+        bookingService.createBooking(bookingDto, booking.getBooker().getId());
 
     }
 
@@ -67,27 +77,27 @@ class BookingServiceImplTest {
     @Order(3)
     void getBooking() {
         User user = new User(5, "Name", "a@mail.ru");
-        userService.addUser(user);
+        userRepository.save(user);
         User booker = new User(6, "Name", "b@mail.ru");
-        userService.addUser(booker);
+        userRepository.save(booker);
         Item item = new Item(3, "itemName", "item description", true, user);
-        itemService.addItem(item);
+        itemRepository.save(item);
         Booking booking = new Booking(LocalDateTime.now(), LocalDateTime.now(), booker, item, Status.APPROVED);
-        bookingService.createBooking(booking);
-        assertThat(bookingService.getBooking(3), equalTo(booking));
+        bookingRepository.save(booking);
+        assertThat(bookingService.getBookingDto(3).getId(), equalTo(3L));
     }
 
     @Test
     @Order(4)
     void showAllUserBookings() {
         User user = new User(7, "Name", "a@mail.ru");
-        userService.addUser(user);
+        userRepository.save(user);
         User booker = new User(8, "Name", "b@mail.ru");
-        userService.addUser(booker);
+        userRepository.save(booker);
         Item item = new Item(4, "itemName", "item description", true, user);
-        itemService.addItem(item);
+        itemRepository.save(item);
         Booking booking = new Booking(LocalDateTime.now(), LocalDateTime.now(), booker, item, Status.APPROVED);
-        bookingService.createBooking(booking);
+        bookingRepository.save(booking);
         assertThat(bookingService.showAllUserBookings(8, State.ALL).get(0), equalTo(booking));
     }
 
@@ -95,13 +105,13 @@ class BookingServiceImplTest {
     @Order(5)
     void showOwnerBookings() {
         User user = new User(9, "Name", "a@mail.ru");
-        userService.addUser(user);
+        userRepository.save(user);
         User booker = new User(10, "Name", "b@mail.ru");
-        userService.addUser(booker);
+        userRepository.save(booker);
         Item item = new Item(5, "itemName", "item description", true, user);
-        itemService.addItem(item);
+        itemRepository.save(item);
         Booking booking = new Booking(LocalDateTime.now(), LocalDateTime.now(), booker, item, Status.APPROVED);
-        bookingService.createBooking(booking);
+        bookingRepository.save(booking);
         assertThat(bookingService.showOwnerBookings(9, State.ALL).get(0), equalTo(booking));
     }
 
@@ -109,13 +119,13 @@ class BookingServiceImplTest {
     @Order(6)
     void showAll() {
         User user = new User(11, "Name", "a@mail.ru");
-        userService.addUser(user);
         User booker = new User(12, "Name", "b@mail.ru");
-        userService.addUser(booker);
         Item item = new Item(6, "itemName", "item description", true, user);
-        itemService.addItem(item);
         Booking booking = new Booking(LocalDateTime.now(), LocalDateTime.now(), booker, item, Status.APPROVED);
-        bookingService.createBooking(booking);
+        userRepository.save(user);
+        userRepository.save(booker);
+        itemRepository.save(item);
+        bookingRepository.save(booking);
         assertThat(bookingService.showAll(State.ALL).get(0), equalTo(booking));
     }
 
@@ -123,13 +133,13 @@ class BookingServiceImplTest {
     @Order(7)
     void showAllPageable() {
         User user = new User(13, "Name", "a@mail.ru");
-        userService.addUser(user);
         User booker = new User(14, "Name", "b@mail.ru");
-        userService.addUser(booker);
         Item item = new Item(7, "itemName", "item description", true, user);
-        itemService.addItem(item);
         Booking booking = new Booking(LocalDateTime.now(), LocalDateTime.now(), booker, item, Status.APPROVED);
-        bookingService.createBooking(booking);
+        userRepository.save(user);
+        userRepository.save(booker);
+        itemRepository.save(item);
+        bookingRepository.save(booking);
         assertThat(bookingService.showAll(State.ALL, 0, 1).get(0), equalTo(booking));
     }
 
@@ -137,13 +147,13 @@ class BookingServiceImplTest {
     @Order(8)
     void isBookingExist() {
         User user = new User(15, "Name", "a@mail.ru");
-        userService.addUser(user);
         User booker = new User(16, "Name", "b@mail.ru");
-        userService.addUser(booker);
         Item item = new Item(8, "itemName", "item description", true, user);
-        itemService.addItem(item);
         Booking booking = new Booking(LocalDateTime.now(), LocalDateTime.now(), booker, item, Status.APPROVED);
-        bookingService.createBooking(booking);
+        userRepository.save(user);
+        userRepository.save(booker);
+        itemRepository.save(item);
+        bookingRepository.save(booking);
         assertThat(bookingService.isBookingExist(7), equalTo(false));
         assertThat(bookingService.isBookingExist(8), equalTo(true));
     }
@@ -152,13 +162,13 @@ class BookingServiceImplTest {
     @Order(9)
     void getOwnerBookings() {
         User user = new User(17, "Name", "a@mail.ru");
-        userService.addUser(user);
         User booker = new User(18, "Name", "b@mail.ru");
-        userService.addUser(booker);
         Item item = new Item(9, "itemName", "item description", true, user);
-        itemService.addItem(item);
         Booking booking = new Booking(LocalDateTime.now(), LocalDateTime.now(), booker, item, Status.APPROVED);
-        bookingService.createBooking(booking);
+        userRepository.save(user);
+        userRepository.save(booker);
+        itemRepository.save(item);
+        bookingRepository.save(booking);
         assertThat(bookingService.getOwnerBookings(0, 1, 17).get(0), equalTo(booking));
     }
 }

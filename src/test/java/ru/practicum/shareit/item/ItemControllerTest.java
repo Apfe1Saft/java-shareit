@@ -5,16 +5,16 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockedStatic;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import ru.practicum.shareit.comment.CommentDto;
 import ru.practicum.shareit.user.User;
 
@@ -26,150 +26,141 @@ import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 
+@WebMvcTest(ItemController.class)
+@TestPropertySource(properties = {"db.name=item_test"})
 @ExtendWith(MockitoExtension.class)
+@AutoConfigureMockMvc
 class ItemControllerTest {
-    @Mock
+    @MockBean
     private ItemService itemService;
-    @Mock
+    @MockBean
     private ItemMapper itemMapper;
-
-    @InjectMocks
-    private ItemController itemController;
 
     private final ObjectMapper mapper = new ObjectMapper();
 
-    private MockMvc mvc;
-
-    private Item item;
-    private ItemDto itemDto;
+    @Autowired
+    private MockMvc mockMvc;
 
     @BeforeEach
     void setUp() {
         mapper.registerModule(new JavaTimeModule());
-        mvc = MockMvcBuilders.standaloneSetup(itemController).build();
-        item = new Item(1, "name", "descr", true,
-                new User(1, "name", "a@email.ru"));
-        itemDto = ItemMapper.toItemDto(item);
     }
 
     @Test
     void create() throws Exception {
-        when(itemService.addItem(any())).thenReturn(item);
-        try (MockedStatic<ItemMapper> utilities = Mockito.mockStatic(ItemMapper.class)) {
-            utilities.when(() -> ItemMapper.toItem(any(), anyLong())).thenReturn(item);
-            utilities.when(() -> ItemMapper.toItemDto(any())).thenReturn(itemDto);
-            HttpHeaders headers = new HttpHeaders();
-            headers.add("X-Sharer-User-Id", "1");
-            mvc.perform(post("/items")
-                    .headers(headers)
-                    .content(mapper.writeValueAsString(itemDto))
-                    .characterEncoding(StandardCharsets.UTF_8)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .accept(MediaType.APPLICATION_JSON))
-                    .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.id", is(item.getId()), Long.class))
-                    .andExpect(jsonPath("$.name", is(item.getName())))
-                    .andExpect(jsonPath("$.description", is(item.getDescription())));
-        }
-
+        ItemDto itemDto = new ItemDto(0, "1", "1", true);
+        long userId = 1L;
+        when(itemService.addItem(any(), anyLong())).thenReturn(new ItemDto());
+        mockMvc.perform(post("/items")
+                .header("X-Sharer-User-Id", userId)
+                .content(mapper.writeValueAsString(itemDto))
+                .characterEncoding(StandardCharsets.UTF_8)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id", is(0)));
     }
+
 
     @Test
     void show() throws Exception {
-        List<ItemDto> items = new LinkedList<>();
-        items.add(new ItemDto(1, "name", "descr", true));
-        when(itemService.show(anyLong())).thenReturn(items);
+        ItemDto itemDto = new ItemDto(0, "1", "1", true);
+        long userId = 1L;
+        when(itemService.show(anyLong())).thenReturn(new LinkedList<>());
         HttpHeaders headers = new HttpHeaders();
         headers.add("X-Sharer-User-Id", "1");
-        mvc.perform(get("/items")
+        mockMvc.perform(get("/items")
                 .headers(headers))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].id", is(item.getId()), Long.class))
-                .andExpect(jsonPath("$[0].name", is(item.getName())))
-                .andExpect(jsonPath("$[0].description", is(item.getDescription())));
+                .andExpect(content().json("[]"));
     }
 
     @Test
     void showPageable() throws Exception {
-        List<Item> items = new LinkedList<>();
-        items.add(item);
+        User user = new User(1, "1", "1@mail.ru");
+        Item item = new Item(1, "1", "1", true, user);
+        ItemDto itemDto = new ItemDto(0, "1", "1", true);
+        List<ItemDto> items = new LinkedList<>();
+        items.add(itemDto);
         when(itemService.show(anyLong(), anyInt(), anyInt())).thenReturn(new PageImpl<>(items));
         HttpHeaders headers = new HttpHeaders();
         headers.add("X-Sharer-User-Id", "1");
-        mvc.perform(get("/items")
+        mockMvc.perform(get("/items")
                 .headers(headers)
                 .param("from", "0")
                 .param("size", "1"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].id", is(item.getId()), Long.class))
-                .andExpect(jsonPath("$[0].name", is(item.getName())))
-                .andExpect(jsonPath("$[0].description", is(item.getDescription())));
+                .andExpect(jsonPath("$[0].id", is(0)))
+                .andExpect(jsonPath("$[0].name", is("1")))
+                .andExpect(jsonPath("$[0].description", is("1")));
     }
 
     @Test
     void update() throws Exception {
-        when(itemService.updateItem(itemDto, 1L, 1)).thenReturn(item);
+        ItemDto itemDto = new ItemDto(0, "1", "1", true);
+        when(itemService.updateItem(itemDto, 1L, 1)).thenReturn(new ItemDto());
         HttpHeaders headers = new HttpHeaders();
         headers.add("X-Sharer-User-Id", "1");
-        mvc.perform(patch("/items/1")
+        mockMvc.perform(patch("/items/1")
                 .headers(headers)
                 .content(mapper.writeValueAsString(itemDto))
                 .characterEncoding(StandardCharsets.UTF_8)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id", is(item.getId()), Long.class))
-                .andExpect(jsonPath("$.name", is(item.getName())))
-                .andExpect(jsonPath("$.description", is(item.getDescription())));
+                .andExpect(jsonPath("$.id", is(0L), Long.class));
     }
 
     @Test
     void getItemDtoById() throws Exception {
+        ItemDto itemDto = new ItemDto(0, "1", "1", true);
         when(itemService.getItemDtoById(1, 1L)).thenReturn(itemDto);
         HttpHeaders headers = new HttpHeaders();
         headers.add("X-Sharer-User-Id", "1");
-        mvc.perform(get("/items/1")
+        mockMvc.perform(get("/items/1")
                 .headers(headers)
                 .content(mapper.writeValueAsString(itemDto))
                 .characterEncoding(StandardCharsets.UTF_8)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id", is(item.getId()), Long.class))
-                .andExpect(jsonPath("$.name", is(item.getName())))
-                .andExpect(jsonPath("$.description", is(item.getDescription())));
+                .andExpect(jsonPath("$.id", is(0L), Long.class))
+                .andExpect(jsonPath("$.name", is("1")))
+                .andExpect(jsonPath("$.description", is("1")));
     }
 
     @Test
     void search() throws Exception {
+        ItemDto itemDto = new ItemDto(0, "1", "1", true);
         List<ItemDto> items = new LinkedList<>();
         items.add(itemDto);
         when(itemService.searchItems("item")).thenReturn(items);
         HttpHeaders headers = new HttpHeaders();
         headers.add("X-Sharer-User-Id", "1");
-        mvc.perform(get("/items/search?text=item")
+        mockMvc.perform(get("/items/search?text=item")
+                .headers(headers)
                 .content(mapper.writeValueAsString("item"))
                 .characterEncoding(StandardCharsets.UTF_8)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].id", is(item.getId()), Long.class))
-                .andExpect(jsonPath("$[0].name", is(item.getName())))
-                .andExpect(jsonPath("$[0].description", is(item.getDescription())));
+                .andExpect(jsonPath("$[0].id", is(0L), Long.class))
+                .andExpect(jsonPath("$[0].name", is("1")))
+                .andExpect(jsonPath("$[0].description", is("1")));
     }
 
     @Test
     void searchPageable() throws Exception {
+        ItemDto itemDto = new ItemDto(0, "1", "1", true);
         List<ItemDto> items = new LinkedList<>();
         items.add(itemDto);
         when(itemService.searchItems("item", 0, 1)).thenReturn(items);
         HttpHeaders headers = new HttpHeaders();
         headers.add("X-Sharer-User-Id", "1");
-        mvc.perform(get("/items/search?text=item")
+        mockMvc.perform(get("/items/search?text=item")
                 .headers(headers)
                 .param("from", "0")
                 .param("size", "1")
@@ -178,9 +169,9 @@ class ItemControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].id", is(item.getId()), Long.class))
-                .andExpect(jsonPath("$[0].name", is(item.getName())))
-                .andExpect(jsonPath("$[0].description", is(item.getDescription())));
+                .andExpect(jsonPath("$[0].id", is(0L), Long.class))
+                .andExpect(jsonPath("$[0].name", is("1")))
+                .andExpect(jsonPath("$[0].description", is("1")));
     }
 
     @Test
@@ -190,7 +181,7 @@ class ItemControllerTest {
                 .thenReturn(commentDto);
         HttpHeaders headers = new HttpHeaders();
         headers.add("X-Sharer-User-Id", "1");
-        mvc.perform(post("/items/1/comment")
+        mockMvc.perform(post("/items/1/comment")
                 .headers(headers)
                 .content(mapper.writeValueAsString(commentDto))
                 .characterEncoding(StandardCharsets.UTF_8)

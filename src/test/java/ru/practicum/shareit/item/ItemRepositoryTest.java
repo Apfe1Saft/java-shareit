@@ -1,44 +1,31 @@
 package ru.practicum.shareit.item;
 
-import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
-import ru.practicum.shareit.config.PersistenceConfig;
+import org.springframework.test.context.TestPropertySource;
 import ru.practicum.shareit.user.User;
-import ru.practicum.shareit.user.UserService;
-import ru.practicum.shareit.user.UserServiceImpl;
+import ru.practicum.shareit.user.UserRepository;
 
 @DataJpaTest
-@RequiredArgsConstructor(onConstructor_ = @Autowired)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-@SpringJUnitConfig({PersistenceConfig.class, UserServiceImpl.class,
-        ItemServiceImpl.class})
+@TestPropertySource(properties = {"db.name=item_test"})
+//@TestPropertySource(properties = { "db.name=test"})
 class ItemRepositoryTest {
-    private final UserService userService;
-
     @Autowired
-    private TestEntityManager em;
-
+    private UserRepository userRepository;
     @Autowired
     private ItemRepository repository;
 
-    @Test
-    public void contextLoads() {
-        Assertions.assertNotNull(em);
-    }
 
     @Test
     @Order(1)
     void searchWithParams() {
         User user = new User(1, "Name", "qwerty@mail.ru");
-        userService.addUser(user);
+        userRepository.save(user);
         Item item = new Item(1, "itemName", "item description", true, user);
-        //Pageable uPage = PageRequest.of(0, 1);
         Assertions.assertEquals(repository.searchWithParams("item").toString(), "[]");
         repository.save(item);
         Assertions.assertNotNull(repository.searchWithParams("item"));
@@ -48,7 +35,7 @@ class ItemRepositoryTest {
     @Order(2)
     void searchWithParamsPageable() {
         User user = new User(2, "Name", "qwerty@mail.ru");
-        userService.addUser(user);
+        userRepository.save(user);
         Item item = new Item(2, "itemName", "item description", true, user);
         Pageable uPage = PageRequest.of(0, 1);
         Assertions.assertEquals(repository.searchWithParams("item", uPage).toString(), "[]");

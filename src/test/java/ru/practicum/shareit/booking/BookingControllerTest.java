@@ -1,190 +1,119 @@
 package ru.practicum.shareit.booking;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockedStatic;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.mockito.junit.jupiter.MockitoSettings;
-import org.mockito.quality.Strictness;
-import org.springframework.http.HttpHeaders;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import ru.practicum.shareit.item.Item;
 import ru.practicum.shareit.user.User;
-import ru.practicum.shareit.user.UserController;
 import ru.practicum.shareit.user.UserService;
 
-import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Optional;
+import java.util.Collections;
 
-import static org.hamcrest.Matchers.is;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+@WebMvcTest(BookingController.class)
 @ExtendWith(MockitoExtension.class)
-@MockitoSettings(strictness = Strictness.LENIENT)
+@TestPropertySource(properties = {"db.name=booking_test"})
+@AutoConfigureMockMvc
 class BookingControllerTest {
-    @Mock
+    @MockBean
     private BookingService bookingService;
-    @Mock
+
+    @MockBean
     private UserService userService;
-    @Mock
-    private BookingMapper bookingMapper;
-    @Mock
-    private UserController userController;
 
-    @InjectMocks
-    private BookingController bookingController;
+    @Autowired
+    private MockMvc mockMvc;
 
-    private final ObjectMapper mapper = new ObjectMapper();
+    @Test
+    void testGetBookings() throws Exception {
+        // given
+        String state = "ALL";
+        long userId = 1L;
+        int from = 0;
+        int size = 20;
+        when(userService.getUser(anyLong())).thenReturn(java.util.Optional.of(new User()));
+        when(bookingService.showAllUserBookings(userId, State.PAST)).thenReturn(Collections.emptyList());
 
-    private MockMvc mvc;
-
-    private Booking booking;
-    private BookingDto bookingDto;
-
-    @BeforeEach
-    void setUp() {
-        mapper.registerModule(new JavaTimeModule());
-        mvc = MockMvcBuilders.standaloneSetup(bookingController).build();
-        User user = new User(1, "Name", "qwerty@mail.ru");
-        Item item = new Item(1, "itemName", "item description", true, user);
-        booking = new Booking(LocalDateTime.now(), LocalDateTime.now(), user, item, Status.APPROVED);
-        bookingDto = new BookingDto(1, 1, LocalDateTime.now(), LocalDateTime.now());
+        // when + then
+        mockMvc.perform(get("/bookings")
+                .header("X-Sharer-User-Id", userId)
+                .param("from", String.valueOf(from))
+                .param("size", String.valueOf(size))
+                .param("state", state))
+                .andExpect(status().isOk())
+                .andExpect(content().json("[]"));
+        verify(bookingService, times(1)).showAll(State.ALL, from, size);
     }
 
     @Test
-    void create() throws Exception {
-        when(bookingService.createBooking(booking)).thenReturn(booking);
-        try (MockedStatic<BookingMapper> utilities = Mockito.mockStatic(BookingMapper.class)) {
-            utilities.when(() -> BookingMapper.toBookingDto(any())).thenReturn(bookingDto);
-            HttpHeaders headers = new HttpHeaders();
-            headers.add("X-Sharer-User-Id", "1");
-            mvc.perform(post("/bookings")
-                    .headers(headers)
-                    .content(mapper.writeValueAsString(bookingDto))
-                    .characterEncoding(StandardCharsets.UTF_8)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .accept(MediaType.APPLICATION_JSON))
-                    .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.id", is(1)))
-                    .andExpect(jsonPath("$.itemId", is(1)))
-                    .andExpect(jsonPath("$.bookerId", is(0)));
-        }
+    void testGetOwnerBookings() throws Exception {
+        // given
+        String state = "ALL";
+        long userId = 1L;
+        int from = 0;
+        int size = 20;
+        when(userService.getUser(anyLong())).thenReturn(java.util.Optional.of(new User()));
+        when(bookingService.showAllUserBookings(userId, State.PAST)).thenReturn(Collections.emptyList());
+
+        // when + then
+        mockMvc.perform(get("/bookings/owner")
+                .header("X-Sharer-User-Id", userId)
+                .param("from", String.valueOf(from))
+                .param("size", String.valueOf(size))
+                .param("state", state))
+                .andExpect(status().isOk())
+                .andExpect(content().json("[]"));
+        verify(bookingService, times(1)).getOwnerBookings(from, size, userId);
     }
 
     @Test
-    void approval() throws Exception {
-        doNothing().when(bookingService).approval(anyLong(), anyLong(), anyBoolean());
-        when(bookingService.getBooking(anyLong())).thenReturn(booking);
-        try (MockedStatic<BookingMapper> utilities = Mockito.mockStatic(BookingMapper.class)) {
-            utilities.when(() -> BookingMapper.toBookingDto(any())).thenReturn(bookingDto);
-            HttpHeaders headers = new HttpHeaders();
-            headers.add("X-Sharer-User-Id", "1");
-            mvc.perform(patch("/bookings/1?approved=true")
-                    .headers(headers)
-                    .content(mapper.writeValueAsString(bookingDto))
-                    .characterEncoding(StandardCharsets.UTF_8)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .accept(MediaType.APPLICATION_JSON))
-                    .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.id", is(0)))
-                    .andExpect(jsonPath("$.item.id", is(1)))
-                    .andExpect(jsonPath("$.booker.id", is(1)));
-        }
+    void testBookItem() throws Exception {
+        // given
+        long userId = 1L;
+        long itemId = 2L;
+        BookingDto bookingDto = new BookingDto(3L, itemId, userId, null, null);
+        when(bookingService.createBooking(any(), anyLong())).thenReturn(bookingDto);
+
+        // when + then
+        mockMvc.perform(post("/bookings")
+                .header("X-Sharer-User-Id", userId)
+                .content(String.format("{\"itemId\": %s,\"start\": \"%s\", \"end\":\"%s\"}", itemId
+                        , LocalDateTime.now().plusDays(1), LocalDateTime.now().plusDays(2)))
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(bookingDto.getId()));
+        verify(bookingService, times(1)).createBooking(any(), anyLong());
     }
 
     @Test
-    void getBooking() throws Exception {
-        when(bookingService.getBooking(anyLong())).thenReturn(booking);
+    void testGetBooking() throws Exception {
+        // given
+        long userId = 1L;
+        long bookerId = 0L;
+        BookingDto bookingDto = new BookingDto(3L, userId, null, null);
+        when(userService.getUser(anyLong())).thenReturn(java.util.Optional.of(new User()));
         when(bookingService.isBookingExist(anyLong())).thenReturn(true);
-        when(userService.getUser(anyLong())).thenReturn(Optional.of(booking.getBooker()));
-        try (MockedStatic<UserController> utilities = Mockito.mockStatic(UserController.class)) {
-            utilities.when(UserController::getUserService).thenReturn(userService);
-            HttpHeaders headers = new HttpHeaders();
-            headers.add("X-Sharer-User-Id", "1");
-            mvc.perform(get("/bookings/1")
-                    .headers(headers))
-                    .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.id", is(0)))
-                    .andExpect(jsonPath("$.item.id", is(1)))
-                    .andExpect(jsonPath("$.booker.id", is(1)));
-        }
+        when(bookingService.getBookingDto(bookingDto.getId())).thenReturn(bookingDto);
+
+        // when + then
+        mockMvc.perform(get("/bookings/" + bookingDto.getId())
+                .header("X-Sharer-User-Id", bookerId))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(3));
+        verify(bookingService, times(2)).getBookingDto(anyLong());
     }
 
-    @Test
-    void getOwnerBookings() throws Exception {
-        List<Booking> bookingList = new LinkedList<>();
-        bookingList.add(booking);
-        when(bookingService.showOwnerBookings(anyLong(), any())).thenReturn(bookingList);
-        when(bookingService.isBookingExist(anyLong())).thenReturn(true);
-        when(userService.getUser(anyLong())).thenReturn(Optional.of(booking.getBooker()));
-        try (MockedStatic<UserController> utilities = Mockito.mockStatic(UserController.class)) {
-            utilities.when(UserController::getUserService).thenReturn(userService);
-            HttpHeaders headers = new HttpHeaders();
-            headers.add("X-Sharer-User-Id", "1");
-            mvc.perform(get("/bookings/owner")
-                    .headers(headers)
-                    .param("from", "0")
-                    .param("size", "1"))
-                    .andExpect(status().isOk())
-                    .andExpect(jsonPath("$[0].id", is(0)))
-                    .andExpect(jsonPath("$[0].item.id", is(1)))
-                    .andExpect(jsonPath("$[0].booker.id", is(1)));
-        }
-    }
-
-    @Test
-    void getOwnerBookingsPageable() throws Exception {
-        List<Booking> bookingList = new LinkedList<>();
-        bookingList.add(booking);
-        when(bookingService.showOwnerBookings(anyLong(), any())).thenReturn(bookingList);
-        when(bookingService.isBookingExist(anyLong())).thenReturn(true);
-        when(userService.getUser(anyLong())).thenReturn(Optional.of(booking.getBooker()));
-        try (MockedStatic<UserController> utilities = Mockito.mockStatic(UserController.class)) {
-            utilities.when(UserController::getUserService).thenReturn(userService);
-            HttpHeaders headers = new HttpHeaders();
-            headers.add("X-Sharer-User-Id", "1");
-            mvc.perform(get("/bookings/owner")
-                    .headers(headers))
-                    .andExpect(status().isOk())
-                    .andExpect(jsonPath("$[0].id", is(0)))
-                    .andExpect(jsonPath("$[0].item.id", is(1)))
-                    .andExpect(jsonPath("$[0].booker.id", is(1)));
-        }
-    }
-
-    @Test
-    void showAll() throws Exception {
-        List<Booking> bookingList = new LinkedList<>();
-        bookingList.add(booking);
-        when(bookingService.showAll(any())).thenReturn(bookingList);
-        when(userService.getUser(anyLong())).thenReturn(Optional.of(booking.getBooker()));
-        try (MockedStatic<UserController> utilities = Mockito.mockStatic(UserController.class)) {
-            utilities.when(UserController::getUserService).thenReturn(userService);
-            HttpHeaders headers = new HttpHeaders();
-            headers.add("X-Sharer-User-Id", "1");
-            mvc.perform(get("/bookings")
-                    .headers(headers)
-                    .param("state", "ALL"))
-                    .andExpect(status().isOk())
-                    .andExpect(jsonPath("$[0].id", is(0)))
-                    .andExpect(jsonPath("$[0].item.id", is(1)))
-                    .andExpect(jsonPath("$[0].booker.id", is(1)));
-        }
-    }
 }

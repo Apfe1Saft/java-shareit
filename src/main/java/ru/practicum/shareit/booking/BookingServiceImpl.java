@@ -6,7 +6,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 import ru.practicum.shareit.exception.NotFoundException;
+import ru.practicum.shareit.exception.ValidationException;
 import ru.practicum.shareit.exception.WrongDataException;
+import ru.practicum.shareit.item.Item;
+import ru.practicum.shareit.item.ItemRepository;
+import ru.practicum.shareit.user.User;
+import ru.practicum.shareit.user.UserRepository;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
@@ -18,17 +23,28 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class BookingServiceImpl implements BookingService {
     private final BookingRepository repository;
+    private final UserRepository userRepository;
+    private final ItemRepository itemRepository;
 
     @Override//I&T
-    public Booking createBooking(Booking booking) {
-        if (booking.getBooker().getId() == booking.getItem().getOwner().getId())
-            throw new NotFoundException("Owner and Booker are one User.");
-        if (booking.getStart().isBefore(LocalDateTime.now()))
-            throw new WrongDataException("Wrong start date.");
-        if (booking.getItem().isAvailable()) {
-            repository.save(booking);
-            return repository.findById(booking.getId()).orElseThrow();
-        } else throw new WrongDataException("available is false.");
+    public BookingDto createBooking(BookingDto booking, long userId) {
+
+        User booker = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalStateException("Wrong user id=" + userId));
+
+        Item item = itemRepository.findById(booking.getItemId())
+                .filter(i -> i.getOwner().getId() != userId)
+                .orElseThrow(() -> new NotFoundException("Item with id=" + booking.getItemId() + " not found"));
+
+        if (!item.isAvailable()
+                || repository.isAvailableForBooking(booking.getItemId(), booking.getStart(), booking.getEnd())) {
+            throw new ValidationException("Item with id=" + booking.getItemId() + " not available");
+        }
+
+        Booking savedBooking = repository.save(BookingMapper.toBooking(booking, booker, item));
+
+        return BookingMapper.toBookingDto(savedBooking);
+
     }
 
     @Override//I&T
@@ -51,8 +67,13 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override//I&T
+    public BookingDto getBookingDto(long bookingId) {
+        return BookingMapper.toBookingDto(repository.findById(bookingId).get());
+    }
+
+
     public Booking getBooking(long bookingId) {
-        return repository.getById(bookingId);
+        return repository.findById(bookingId).get();
     }
 
     @Override//I&T

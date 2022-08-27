@@ -3,11 +3,11 @@ package ru.practicum.shareit.booking;
 import java.util.List;
 
 public interface BookingService {
-    Booking createBooking(Booking booking);
+    BookingDto createBooking(BookingDto booking, long userId);
 
     void approval(long bookingId, long userId, boolean approval);
 
-    Booking getBooking(long bookingId);
+    BookingDto getBookingDto(long bookingId);
 
     List<Booking> showAllUserBookings(long userId, State state);
 

@@ -1,15 +1,12 @@
 package ru.practicum.shareit.user;
 
-import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
-import ru.practicum.shareit.config.PersistenceConfig;
+import org.springframework.boot.test.context.SpringBootTest;
 
-import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 import java.util.HashSet;
 import java.util.Set;
@@ -17,14 +14,12 @@ import java.util.Set;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 
+@SpringBootTest
 @Transactional
-@RequiredArgsConstructor(onConstructor_ = @Autowired)
-//@TestPropertySource(properties = { "db.name=test"})
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-@SpringJUnitConfig({PersistenceConfig.class, UserServiceImpl.class})
 class UserServiceImplTest {
-    private final EntityManager em;
-    private final UserService userService;
+    @Autowired
+    private UserService userService;
 
 
     @Test

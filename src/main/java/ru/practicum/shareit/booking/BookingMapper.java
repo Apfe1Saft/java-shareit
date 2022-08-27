@@ -1,15 +1,16 @@
 package ru.practicum.shareit.booking;
 
-import ru.practicum.shareit.item.ItemController;
-import ru.practicum.shareit.user.UserController;
+import ru.practicum.shareit.item.Item;
+import ru.practicum.shareit.user.User;
 
 public class BookingMapper {
-    public static Booking toBooking(BookingDto bookingDto, long userId) {
+    public static Booking toBooking(BookingDto bookingDto, User user, Item item) {
         return new Booking(
+                bookingDto.getId(),
                 bookingDto.getStart(),
                 bookingDto.getEnd(),
-                UserController.getUserService().getUser(userId).get(),
-                ItemController.getItemService().getItemById(bookingDto.getItemId()),
+                user,
+                item,
                 Status.WAITING
         );
     }

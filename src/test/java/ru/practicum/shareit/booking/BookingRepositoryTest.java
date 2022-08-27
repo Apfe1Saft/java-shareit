@@ -1,52 +1,38 @@
 package ru.practicum.shareit.booking;
 
-import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
-import ru.practicum.shareit.config.PersistenceConfig;
+import org.springframework.test.context.TestPropertySource;
 import ru.practicum.shareit.item.Item;
-import ru.practicum.shareit.item.ItemController;
-import ru.practicum.shareit.item.ItemService;
-import ru.practicum.shareit.item.ItemServiceImpl;
+import ru.practicum.shareit.item.ItemRepository;
 import ru.practicum.shareit.user.User;
-import ru.practicum.shareit.user.UserController;
-import ru.practicum.shareit.user.UserService;
-import ru.practicum.shareit.user.UserServiceImpl;
+import ru.practicum.shareit.user.UserRepository;
 
 import java.time.LocalDateTime;
 
 @DataJpaTest
-@RequiredArgsConstructor(onConstructor_ = @Autowired)
+@TestPropertySource(properties = {"db.name=booking_test"})
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-@SpringJUnitConfig({PersistenceConfig.class, UserServiceImpl.class,
-        ItemServiceImpl.class, UserController.class, ItemController.class})
 class BookingRepositoryTest {
-    private final UserService userService;
-    private final ItemService itemService;
-
     @Autowired
-    private TestEntityManager em;
+    private UserRepository userRepository;
+    @Autowired
+    private ItemRepository itemRepository;
 
     @Autowired
     private BookingRepository repository;
 
-    @Test
-    public void contextLoads() {
-        Assertions.assertNotNull(em);
-    }
 
     @Test
     @Order(1)
     void findByBookerId() {
         User user = new User(1, "Name", "qwerty@mail.ru");
-        userService.addUser(user);
+        userRepository.save(user);
         Item item = new Item(1, "itemName", "item description", true, user);
-        itemService.addItem(item);
+        itemRepository.save(item);
         Booking booking = new Booking(LocalDateTime.now(), LocalDateTime.now(), user, item, Status.APPROVED);
         booking.setId(1);
         Pageable uPage = PageRequest.of(0, 1);
@@ -59,9 +45,9 @@ class BookingRepositoryTest {
     @Order(2)
     void getOwnerBookings() {
         User user = new User(2, "Name", "qwerty@mail.ru");
-        userService.addUser(user);
+        userRepository.save(user);
         Item item = new Item(2, "itemName", "item description", true, user);
-        itemService.addItem(item);
+        itemRepository.save(item);
         Booking booking = new Booking(LocalDateTime.now(), LocalDateTime.now(), user, item, Status.APPROVED);
         booking.setId(2);
         Pageable uPage = PageRequest.of(0, 1);
