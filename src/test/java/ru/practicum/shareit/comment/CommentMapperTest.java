@@ -19,7 +19,7 @@ import java.time.LocalDate;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @DataJpaTest
 @TestPropertySource(properties = {"db.name=comment_test"})
-class CommentMapperTest {
+public class CommentMapperTest {
     @Autowired
     private UserRepository userRepository;
     @Autowired
