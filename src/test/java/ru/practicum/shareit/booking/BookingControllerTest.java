@@ -27,7 +27,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ExtendWith(MockitoExtension.class)
 @TestPropertySource(properties = {"db.name=booking_test"})
 @AutoConfigureMockMvc
-class BookingControllerTest {
+public class BookingControllerTest {
     @MockBean
     private BookingService bookingService;
 

@@ -31,7 +31,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @TestPropertySource(properties = {"db.name=request_test"})
 @ExtendWith(MockitoExtension.class)
 @AutoConfigureMockMvc
-class ItemRequestControllerTest {
+public class ItemRequestControllerTest {
     @MockBean
     private RequestService requestService;
 

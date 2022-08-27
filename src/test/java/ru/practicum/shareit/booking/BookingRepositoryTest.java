@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 @DataJpaTest
 @TestPropertySource(properties = {"db.name=booking_test"})
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-class BookingRepositoryTest {
+public class BookingRepositoryTest {
     @Autowired
     private UserRepository userRepository;
     @Autowired

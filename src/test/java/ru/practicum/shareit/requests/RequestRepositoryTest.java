@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 
 @DataJpaTest
 @TestPropertySource(properties = {"db.name=request_test"})
-class RequestRepositoryTest {
+public class RequestRepositoryTest {
     @Autowired
     private UserRepository userRepository;
     @Autowired

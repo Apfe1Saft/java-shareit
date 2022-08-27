@@ -10,7 +10,7 @@ import ru.practicum.shareit.user.User;
 import java.time.LocalDateTime;
 
 @TestPropertySource(properties = {"db.name=booking_test"})
-class BookingMapperTest {
+public class BookingMapperTest {
 
     @Test
     void toBookingDto() {

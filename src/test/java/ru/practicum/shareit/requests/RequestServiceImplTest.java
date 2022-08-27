@@ -24,7 +24,7 @@ import static org.hamcrest.Matchers.equalTo;
 @TestPropertySource(properties = {"db.name=request_test"})
 @Transactional
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-class RequestServiceImplTest {
+public class RequestServiceImplTest {
     @Autowired
     private BookingService bookingService;
     @Autowired

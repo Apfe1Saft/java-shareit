@@ -17,7 +17,7 @@ import static org.hamcrest.Matchers.equalTo;
 @SpringBootTest
 @Transactional
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-class UserServiceImplTest {
+public class UserServiceImplTest {
     @Autowired
     private UserService userService;
 

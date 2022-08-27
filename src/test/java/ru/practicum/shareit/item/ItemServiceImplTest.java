@@ -25,11 +25,10 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 
 @SpringBootTest
-//@TestPropertySource(properties = { "db.name=test"})
 @Transactional
 @TestPropertySource(properties = {"db.name=item_test"})
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-class ItemServiceImplTest {
+public class ItemServiceImplTest {
     @Autowired
     private UserRepository userRepository;
     @Autowired

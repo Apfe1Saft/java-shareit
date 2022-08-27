@@ -13,7 +13,7 @@ import javax.transaction.Transactional;
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 @TestPropertySource(properties = {"db.name=item_test"})
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-class ItemMapperTest {
+public class ItemMapperTest {
 
     @Test
     @Order(1)

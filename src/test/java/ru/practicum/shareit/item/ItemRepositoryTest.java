@@ -12,8 +12,7 @@ import ru.practicum.shareit.user.UserRepository;
 @DataJpaTest
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @TestPropertySource(properties = {"db.name=item_test"})
-//@TestPropertySource(properties = { "db.name=test"})
-class ItemRepositoryTest {
+public class ItemRepositoryTest {
     @Autowired
     private UserRepository userRepository;
     @Autowired
