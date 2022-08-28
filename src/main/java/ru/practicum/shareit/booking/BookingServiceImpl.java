@@ -6,7 +6,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 import ru.practicum.shareit.exception.NotFoundException;
-import ru.practicum.shareit.exception.ValidationException;
 import ru.practicum.shareit.exception.WrongDataException;
 import ru.practicum.shareit.item.Item;
 import ru.practicum.shareit.item.ItemRepository;
@@ -41,7 +40,7 @@ public class BookingServiceImpl implements BookingService {
                 || repository.isAvailableForBooking(booking.getItemId(), booking.getStart(), booking.getEnd())) {
             throw new WrongDataException("Item with id=" + booking.getItemId() + " not available");
         }
-        if(booking.getEnd().isBefore(LocalDateTime.now())){
+        if (booking.getEnd().isBefore(LocalDateTime.now())) {
             throw new WrongDataException("Wrong end time");
         }
 
@@ -132,12 +131,14 @@ public class BookingServiceImpl implements BookingService {
 
     @Override//I&T
     public List<Booking> showAll(State state, int firstPage, int size) {
-        Pageable uPage = PageRequest.of(firstPage, size);
+        System.out.println(state + " " + firstPage + " " + size);
+        System.out.println("showAll:" + repository.findAll());
+        Pageable uPage = PageRequest.of(firstPage, size, Sort.by("id"));
         switch (state) {
             case ALL:
-                return repository.findAll(uPage).stream()
-                        .sorted(Comparator.comparing(Booking::getStart))
-                        .collect(Collectors.toList());
+                //System.out.println("BINGO");
+               // System.out.println(repository.findAll(PageRequest.of(firstPage, size, Sort.by("id").descending())).stream().collect(Collectors.toList()));
+                return repository.findAll(PageRequest.of(firstPage, size, Sort.by("id").descending())).stream().collect(Collectors.toList());
             case PAST:
                 return repository.findAll(uPage).stream()
                         .filter(x -> x.getEnd().isBefore(LocalDateTime.now()))
@@ -176,8 +177,7 @@ public class BookingServiceImpl implements BookingService {
         if (size == 0) {
             throw new WrongDataException("");
         }
-        Pageable uPage = PageRequest.of(firstPage, size, Sort.by("start"));
-        return repository.getOwnerBookings(userId, uPage);
+        return repository.getOwnerBookings(userId, PageRequest.of(firstPage, size, Sort.by("start").descending()));
     }
 
 

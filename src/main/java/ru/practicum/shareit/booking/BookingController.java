@@ -1,6 +1,7 @@
 package ru.practicum.shareit.booking;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.HandlerMapping;
@@ -64,7 +65,8 @@ public class BookingController {
                                                  @RequestParam(name = "from", defaultValue = "") String from,
                                                  @RequestParam(name = "size", defaultValue = "") String size) {
         if (!from.equals("") && !size.equals("")) {
-            bookingService.getOwnerBookings(Integer.parseInt(from), Integer.parseInt(size), Long.parseLong(userId));
+            System.out.println();
+            return bookingService.getOwnerBookings(Integer.parseInt(from), Integer.parseInt(size), Long.parseLong(userId));
         }
         isUserExist(Long.parseLong(userId));
         State newState;
@@ -73,7 +75,7 @@ public class BookingController {
         } catch (IllegalArgumentException e) {
             throw new ValidationException("Unknown state: UNSUPPORTED_STATUS");
         }
-        return bookingService.showOwnerBookings(Long.parseLong(userId), newState);
+        return  bookingService.showOwnerBookings(Long.parseLong(userId), newState);
     }
 
     /*
@@ -102,8 +104,10 @@ public class BookingController {
             answer = bookingService.showAll(newState).stream().filter(x -> x.getBooker()
                     .getId() == Long.parseLong(userId)).collect(Collectors.toList());
         } else {
-            answer = bookingService.showAll(newState, Integer.parseInt(from), Integer.parseInt(size)).stream().filter(x -> x.getBooker()
-                    .getId() == Long.parseLong(userId)).collect(Collectors.toList());
+            System.out.println("THERE");
+            answer = bookingService.showAll(newState, Integer.parseInt(from), Integer.parseInt(size)).stream()
+                    .filter(x -> x.getBooker().getId() == Long.parseLong(userId))
+                    .collect(Collectors.toList());
         }
         Collections.reverse(answer);
         return answer;

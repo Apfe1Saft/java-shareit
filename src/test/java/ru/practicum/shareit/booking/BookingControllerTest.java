@@ -10,6 +10,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
+import ru.practicum.shareit.item.ItemService;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.UserService;
 
@@ -33,6 +34,9 @@ public class BookingControllerTest {
 
     @MockBean
     private UserService userService;
+
+    @MockBean
+    private ItemService itemService;
 
     @Autowired
     private MockMvc mockMvc;

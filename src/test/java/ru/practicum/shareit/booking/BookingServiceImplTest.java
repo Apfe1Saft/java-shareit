@@ -42,7 +42,7 @@ public class BookingServiceImplTest {
 
     @Test
     @Order(1)
-    void createBooking() {
+    void createBookingAndGetOwnerBookings() {
         User user = new User(1, "Name", "a@mail.ru");
         userRepository.save(user);
         User booker = new User(2, "Name", "b@mail.ru");
@@ -52,10 +52,16 @@ public class BookingServiceImplTest {
         Item item = new Item(1, "itemName", "item description", true, user);
         item.setRequest(request);
         itemRepository.save(item);
-        Booking booking = new Booking(LocalDateTime.now(), LocalDateTime.now(), booker, item, Status.APPROVED);
+        //assertThat(itemRepository.findAll(),equalTo(""));
+        Booking booking = new Booking(LocalDateTime.now().plusDays(1), LocalDateTime.now().plusDays(1), booker, item, Status.APPROVED);
         BookingDto bookingDto = BookingMapper.toBookingDto(booking);
+        bookingDto.setItemId(1);
+        bookingDto.setId(1);
+        bookingDto.setBookerId(2);
         assertThat(bookingService.createBooking(bookingDto, booker.getId()).getItemId(),
                 equalTo(BookingMapper.toBookingDto(booking).getItemId()));
+        assertThat(bookingService.getOwnerBookings(0, 1, 1).get(0).getId(), equalTo(1L));
+
     }
 
     @Test
@@ -67,8 +73,11 @@ public class BookingServiceImplTest {
         userRepository.save(booker);
         Item item = new Item(2, "itemName", "item description", true, user);
         itemRepository.save(item);
-        Booking booking = new Booking(LocalDateTime.now(), LocalDateTime.now(), booker, item, Status.APPROVED);
+        Booking booking = new Booking(LocalDateTime.now().plusDays(1), LocalDateTime.now().plusDays(1), booker, item, Status.APPROVED);
         BookingDto bookingDto = BookingMapper.toBookingDto(booking);
+        bookingDto.setItemId(2);
+        bookingDto.setId(2);
+        bookingDto.setBookerId(4);
         bookingService.createBooking(bookingDto, booking.getBooker().getId());
 
     }
@@ -158,17 +167,4 @@ public class BookingServiceImplTest {
         assertThat(bookingService.isBookingExist(8), equalTo(true));
     }
 
-    @Test
-    @Order(9)
-    void getOwnerBookings() {
-        User user = new User(17, "Name", "a@mail.ru");
-        User booker = new User(18, "Name", "b@mail.ru");
-        Item item = new Item(9, "itemName", "item description", true, user);
-        Booking booking = new Booking(LocalDateTime.now(), LocalDateTime.now(), booker, item, Status.APPROVED);
-        userRepository.save(user);
-        userRepository.save(booker);
-        itemRepository.save(item);
-        bookingRepository.save(booking);
-        assertThat(bookingService.getOwnerBookings(0, 1, 17).get(0), equalTo(booking));
-    }
 }

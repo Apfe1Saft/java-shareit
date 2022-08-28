@@ -17,9 +17,11 @@ public class BookingMapperTest {
         var item = new Item();
         item.setId(3L);
         item.setName("Tool");
+
         var user = new User();
         user.setId(2L);
         user.setName("Test");
+        item.setOwner(user);
         var original = new Booking();
         original.setId(1L);
         original.setStatus(Status.APPROVED);

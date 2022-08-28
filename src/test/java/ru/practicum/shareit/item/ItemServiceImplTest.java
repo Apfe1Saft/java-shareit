@@ -194,7 +194,7 @@ public class ItemServiceImplTest {
         Booking booking = new Booking(LocalDateTime.now(), LocalDateTime.now(), booker, item, Status.APPROVED);
         bookingRepository.save(booking);
         Thread.sleep(500);
-        assertThat(itemService.addComment(comment, 9, 16).getId(),
+        assertThat(itemService.addComment(comment, 9, 17).getId(),
                 equalTo(1L));
     }
 
@@ -216,7 +216,7 @@ public class ItemServiceImplTest {
         Booking booking = new Booking(LocalDateTime.now(), LocalDateTime.now(), booker, item, Status.APPROVED);
         Thread.sleep(500);
         bookingRepository.save(booking);
-        itemService.addComment(comment, 10, 18);
+        itemService.addComment(comment, 10, 19);
         assertThat(itemService.getCommentDto(2).getId(), equalTo(2L));
     }
 
