@@ -137,7 +137,7 @@ public class BookingServiceImpl implements BookingService {
         switch (state) {
             case ALL:
                 //System.out.println("BINGO");
-               // System.out.println(repository.findAll(PageRequest.of(firstPage, size, Sort.by("id").descending())).stream().collect(Collectors.toList()));
+                // System.out.println(repository.findAll(PageRequest.of(firstPage, size, Sort.by("id").descending())).stream().collect(Collectors.toList()));
                 return repository.findAll(PageRequest.of(firstPage, size, Sort.by("id").descending())).stream().collect(Collectors.toList());
             case PAST:
                 return repository.findAll(uPage).stream()

@@ -1,6 +1,5 @@
 package ru.practicum.shareit.booking;
 
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -11,7 +10,9 @@ import java.util.List;
 
 public interface BookingRepository extends JpaRepository<Booking, Long> {
     List<Booking> findByBookerId(Long ownerId, Pageable pageable);
+
     List<Booking> findAllByItemOwner(User owner, Pageable pageable);
+
     @Query(
             " select i from Booking i " +
                     "where i.item.id = :ownerId"

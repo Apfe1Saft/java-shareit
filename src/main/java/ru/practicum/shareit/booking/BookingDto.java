@@ -30,7 +30,8 @@ public class BookingDto {
         this.start = start;
         this.end = end;
     }
-    public BookingDto(long id, long itemId, LocalDateTime start, LocalDateTime end,Status status) {
+
+    public BookingDto(long id, long itemId, LocalDateTime start, LocalDateTime end, Status status) {
         this.id = id;
         this.itemId = itemId;
         this.start = start;
@@ -46,7 +47,8 @@ public class BookingDto {
         this.end = end;
         this.bookerId = bookerId;
     }
-    public BookingDto(long id, long itemId, long bookerId, LocalDateTime start, LocalDateTime end,Status status,Item item ,User user) {
+
+    public BookingDto(long id, long itemId, long bookerId, LocalDateTime start, LocalDateTime end, Status status, Item item, User user) {
 
     }
 

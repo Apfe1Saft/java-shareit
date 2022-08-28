@@ -1,7 +1,6 @@
 package ru.practicum.shareit.booking;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.HandlerMapping;
@@ -52,7 +51,7 @@ public class BookingController {
             throw new NotFoundException("Booking is not exist.");
         }
         isUserExist(Long.parseLong(userId));
-        if (bookingService.getBookingDto(bookingId).getBooker().getId() == Long.parseLong(userId)|| bookingService.getBookingDto(bookingId).getItem().getOwnerId() == Long.parseLong(userId)) {
+        if (bookingService.getBookingDto(bookingId).getBooker().getId() == Long.parseLong(userId) || bookingService.getBookingDto(bookingId).getItem().getOwnerId() == Long.parseLong(userId)) {
             System.out.println("WORK");
             return bookingService.getBookingDto(bookingId);
         }
@@ -75,7 +74,7 @@ public class BookingController {
         } catch (IllegalArgumentException e) {
             throw new ValidationException("Unknown state: UNSUPPORTED_STATUS");
         }
-        return  bookingService.showOwnerBookings(Long.parseLong(userId), newState);
+        return bookingService.showOwnerBookings(Long.parseLong(userId), newState);
     }
 
     /*
