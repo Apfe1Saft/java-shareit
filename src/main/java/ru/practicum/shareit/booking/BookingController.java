@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.HandlerMapping;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.exception.ValidationException;
+import ru.practicum.shareit.item.ItemService;
 import ru.practicum.shareit.user.UserService;
 
 import javax.servlet.http.HttpServletRequest;
@@ -26,6 +27,7 @@ public class BookingController {
 
     private final BookingService bookingService;
     private final UserService userService;
+    private final ItemService itemService;
 
     @PostMapping
     public @Valid BookingDto create(@Valid @RequestBody final BookingDto bookingDto,
@@ -49,7 +51,7 @@ public class BookingController {
             throw new NotFoundException("Booking is not exist.");
         }
         isUserExist(Long.parseLong(userId));
-        if (bookingService.getBookingDto(bookingId).getBookerId() == Long.parseLong(userId)) {
+        if (bookingService.getBookingDto(bookingId).getBooker().getId() == Long.parseLong(userId)|| bookingService.getBookingDto(bookingId).getItem().getOwnerId() == Long.parseLong(userId)) {
             System.out.println("WORK");
             return bookingService.getBookingDto(bookingId);
         }

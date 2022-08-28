@@ -86,6 +86,7 @@ public class ItemServiceImpl implements ItemService {
                 answer.setNextBooking(nextBooking);
             }
             if (getComment(itemId) != null) {
+                System.out.println("SOOOO");
                 List<CommentDto> commentDto = answer.getComments();
                 Comment comment = getComment(itemId);
                 commentDto.add(CommentMapper.toCommentDto(comment));
@@ -152,7 +153,7 @@ public class ItemServiceImpl implements ItemService {
 
         Comment comment = CommentMapper.toComment(commentDto, item, user);
 
-        for (Booking booking : showOwnerBookings(userId, State.ALL)) {
+        for (Booking booking : showAllUserBookings(userId, State.ALL)) {
             if (booking.getItem().getId() == itemId) {
                 if (booking.getEnd().isBefore(LocalDateTime.now())) {
                     commentRepository.save(comment);
@@ -165,7 +166,10 @@ public class ItemServiceImpl implements ItemService {
 
 
     public Comment getComment(long itemId) {
-        return commentRepository.findById(itemId).orElse(null);
+        if (commentRepository.findAll().stream().anyMatch(x -> x.getItem().getId() == itemId)) {
+            return commentRepository.findAll().stream().filter(x -> x.getItem().getId() == itemId).findFirst().get();
+        }
+        return null;
     }
 
     @Override
@@ -179,6 +183,12 @@ public class ItemServiceImpl implements ItemService {
         repository.deleteById(id);
     }
 
+    public List<Booking> showAllUserBookings(long userId, State state) {
+        return showAll(state).stream()
+                .filter(x -> x.getBooker().getId() == userId)
+                .sorted(new BookingComparator())
+                .collect(Collectors.toList());
+    }
 
     private List<Booking> showOwnerBookings(long userId, State state) {
         List<Booking> listOfBooking = showAll(state).stream()

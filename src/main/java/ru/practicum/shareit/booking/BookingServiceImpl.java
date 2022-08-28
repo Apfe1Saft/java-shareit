@@ -28,7 +28,8 @@ public class BookingServiceImpl implements BookingService {
 
     @Override//I&T
     public BookingDto createBooking(BookingDto booking, long userId) {
-
+        if (booking.getStart().isBefore(LocalDateTime.now()))
+            throw new WrongDataException("Wrong start date.");
         User booker = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalStateException("Wrong user id=" + userId));
 
@@ -67,6 +68,7 @@ public class BookingServiceImpl implements BookingService {
                 } else throw new WrongDataException("Wrong User Id.");
             }
         } else throw new WrongDataException("Wrong Booking Id.");
+
     }
 
     @Override//I&T
@@ -130,7 +132,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Override//I&T
     public List<Booking> showAll(State state, int firstPage, int size) {
-        Pageable uPage = PageRequest.of(firstPage, size, Sort.by("start"));
+        Pageable uPage = PageRequest.of(firstPage, size);
         switch (state) {
             case ALL:
                 return repository.findAll(uPage).stream()
