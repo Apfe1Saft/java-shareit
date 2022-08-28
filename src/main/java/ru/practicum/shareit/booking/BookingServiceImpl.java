@@ -38,7 +38,10 @@ public class BookingServiceImpl implements BookingService {
 
         if (!item.isAvailable()
                 || repository.isAvailableForBooking(booking.getItemId(), booking.getStart(), booking.getEnd())) {
-            throw new ValidationException("Item with id=" + booking.getItemId() + " not available");
+            throw new WrongDataException("Item with id=" + booking.getItemId() + " not available");
+        }
+        if(booking.getEnd().isBefore(LocalDateTime.now())){
+            throw new WrongDataException("Wrong end time");
         }
 
         Booking savedBooking = repository.save(BookingMapper.toBooking(booking, booker, item));

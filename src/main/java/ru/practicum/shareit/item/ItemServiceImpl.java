@@ -36,7 +36,10 @@ public class ItemServiceImpl implements ItemService {
     @Override//I&T
     public ItemDto addItem(ItemDto itemDto, long ownerId) {
         User owner = userRepository.findById(ownerId).get();
-        ItemRequest itemRequest = requestRepository.findById(itemDto.getRequestId()).get();
+        ItemRequest itemRequest = null;
+        if(itemDto.getRequestId()>0) {
+            itemRequest = requestRepository.findById(itemDto.getRequestId()).get();
+        }
         Item item = ItemMapper.toItem(itemDto, owner, itemRequest);
         repository.save(item);
         return ItemMapper.toItemDto(repository.findById(item.getId()).get());
@@ -56,7 +59,10 @@ public class ItemServiceImpl implements ItemService {
             }
             itemDto.setId(itemId);
             User owner = userRepository.findById(ownerId).get();
-            ItemRequest request = requestRepository.findById(itemDto.getRequestId()).get();
+            ItemRequest request  = null;
+            if(itemDto.getRequestId()>0) {
+                request = requestRepository.findById(itemDto.getRequestId()).get();
+            }
             repository.save(ItemMapper.toItem(itemDto, owner, request));
             return ItemMapper.toItemDto(repository.findById(itemId).get());
         }
