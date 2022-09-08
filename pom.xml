@@ -11,8 +11,8 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <modules>
-        <module>shareIt-server</module>
-        <module>shareIt-gateway</module>
+        <module>shareit-server</module>
+        <module>shareit-gateway</module>
     </modules>
     <dependencies>
         <dependency>
