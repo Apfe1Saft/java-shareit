@@ -3,6 +3,7 @@ package ru.practicum.shareit.request;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.shareit.exception.NullParamException;
 import ru.practicum.shareit.exception.WrongDataException;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 
@@ -24,7 +25,7 @@ public class RequestController {
     @GetMapping
     public Object getUserRequests(@RequestHeader("X-Sharer-User-Id") Integer userId) {
         if (userId == null) {
-            throw new NullPointerException("Не указан id пользователя.");
+            throw new NullParamException("Не указан id пользователя.");
         } else {
             return requestsClient.getUserRequests(userId);
         }
@@ -48,7 +49,7 @@ public class RequestController {
     public Object getRequest(@PathVariable int requestId,
                           @RequestHeader("X-Sharer-User-Id") Integer userId) {
         if (userId == null) {
-            throw new NullPointerException("Не указан id пользователя.");
+            throw new NullParamException("");
         } else {
             return requestsClient.getRequest(userId, requestId);
         }

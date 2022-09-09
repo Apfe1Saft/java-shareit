@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.exception.NotFoundException;
+import ru.practicum.shareit.exception.NullParamException;
 import ru.practicum.shareit.exception.WrongDataException;
 import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
@@ -32,7 +33,7 @@ public class ItemController {
     public Object show(@RequestHeader("X-Sharer-User-Id") Integer userId,
                        @RequestParam(required = false, defaultValue = "")  String from,
                        @RequestParam(required = false, defaultValue = "")  String size)
-            throws NullPointerException {
+            throws NullParamException {
             return itemClient.show(userId, from, size);
     }
 
@@ -41,7 +42,7 @@ public class ItemController {
                              @RequestHeader("X-Sharer-User-Id") Integer userId,
                              @PathVariable int itemId) {
         if (userId == null) {
-            throw new NullPointerException("Не указан id пользователя.");
+            throw new NullParamException("");
         } else {
             return itemClient.update(itemDto, userId, itemId);
         }
@@ -51,7 +52,7 @@ public class ItemController {
     public Object getItemDtoById(@PathVariable int itemId,
                           @RequestHeader("X-Sharer-User-Id") Integer userId) {
         if (userId == null) {
-            throw new NullPointerException("Не указан id пользователя.");
+            throw new NullParamException("");
         } else {
             return itemClient.getItemDtoById(userId, itemId);
         }
@@ -63,9 +64,9 @@ public class ItemController {
                                @RequestParam String text,
                                @RequestParam(required = false, defaultValue = "0") @Min(0) Integer from,
                                @RequestParam(required = false, defaultValue = "10") @Min(1) Integer size)
-            throws NullPointerException {
+            throws NullParamException {
         if (userId == null) {
-            throw new NullPointerException("Не указан id пользователя.");
+            throw new NullParamException("");
         } else {
             return itemClient.search(userId, text, from, size);
         }
@@ -74,10 +75,10 @@ public class ItemController {
     @PostMapping("/{itemId}/comment")
     public Object addComment(@RequestHeader("X-Sharer-User-Id") Integer userId,
                                 @PathVariable Integer itemId, @RequestBody CommentDto comment)
-            throws NullPointerException {
-        if (comment.getText().equals("")) throw new WrongDataException("text is empty.");
+            throws NullParamException {
+        if (comment.getText().equals("")) throw new WrongDataException("");
         if (userId == null) {
-            throw new NullPointerException("Не указан id пользователя.");
+            throw new NullParamException("");
         } else {
             return itemClient.addComment(userId, itemId, comment);
         }
