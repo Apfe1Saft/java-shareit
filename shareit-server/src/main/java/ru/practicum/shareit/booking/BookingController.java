@@ -16,9 +16,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 
-/**
- * // TODO .
- */
+
 //
 @RestController
 @RequiredArgsConstructor
@@ -46,13 +44,11 @@ public class BookingController {
 
     @GetMapping(value = "/{bookingId:[0-9]+}")
     public @Valid BookingDto getBooking(@RequestHeader("X-Sharer-User-Id") String userId, @PathVariable("bookingId") long bookingId) {
-        System.out.println("getBooking");
         if (!bookingService.isBookingExist(bookingId)) {
             throw new NotFoundException("Booking is not exist.");
         }
         isUserExist(Long.parseLong(userId));
         if (bookingService.getBookingDto(bookingId).getBooker().getId() == Long.parseLong(userId) || bookingService.getBookingDto(bookingId).getItem().getOwnerId() == Long.parseLong(userId)) {
-            System.out.println("WORK");
             return bookingService.getBookingDto(bookingId);
         }
         throw new NotFoundException("User is not the creator of the booking or owner of the item.");
@@ -63,13 +59,8 @@ public class BookingController {
                                                  @RequestParam(name = "state", defaultValue = "ALL", required = false) String state,
                                                  @RequestParam(name = "from", defaultValue = "") String from,
                                                  @RequestParam(name = "size", defaultValue = "") String size) {
-        System.out.println("OWNER JOB");
-        System.out.println(userId);
-        System.out.println(state);
-        System.out.println(from);
-        System.out.println(size);
+
         if (!from.equals("") && !size.equals("")) {
-            System.out.println("GET");
             return bookingService.getOwnerBookings(Integer.parseInt(from), Integer.parseInt(size), Long.parseLong(userId));
         }
         isUserExist(Long.parseLong(userId));
@@ -79,7 +70,6 @@ public class BookingController {
         } catch (IllegalArgumentException e) {
             throw new ValidationException("Unknown state: UNSUPPORTED_STATUS");
         }
-        System.out.println("SHOW");
         return bookingService.showOwnerBookings(Long.parseLong(userId), newState);
     }
 
@@ -102,7 +92,6 @@ public class BookingController {
             answer = bookingService.showAll(newState).stream().filter(x -> x.getBooker()
                     .getId() == Long.parseLong(userId)).collect(Collectors.toList());
         } else {
-            System.out.println("THERE");
             answer = bookingService.showAll(newState, Integer.parseInt(from), Integer.parseInt(size)).stream()
                     .filter(x -> x.getBooker().getId() == Long.parseLong(userId))
                     .collect(Collectors.toList());

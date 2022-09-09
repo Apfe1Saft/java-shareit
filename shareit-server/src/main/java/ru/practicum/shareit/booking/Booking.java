@@ -13,9 +13,7 @@ import javax.persistence.*;
 import javax.validation.constraints.Min;
 import java.time.LocalDateTime;
 
-/**
- * // TODO .
- */
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

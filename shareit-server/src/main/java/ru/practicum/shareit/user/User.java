@@ -5,9 +5,7 @@ import lombok.Data;
 import javax.persistence.*;
 import javax.validation.constraints.Min;
 
-/**
- * // TODO .
- */
+
 @Data
 @Entity
 @Table(name = "users")

@@ -11,9 +11,7 @@ import ru.practicum.shareit.exception.WrongDataException;
 import javax.validation.Valid;
 import java.util.List;
 
-/**
- * // TODO .
- */
+
 @Validated
 @RestController
 @RequestMapping(path = "/users")

@@ -9,9 +9,7 @@ import ru.practicum.shareit.comment.CommentDto;
 import java.util.LinkedList;
 import java.util.List;
 
-/**
- * // TODO .
- */
+
 @Data
 @Getter
 @Setter

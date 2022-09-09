@@ -10,9 +10,7 @@ import ru.practicum.shareit.user.UserService;
 import javax.validation.Valid;
 import java.util.List;
 
-/**
- * // TODO .
- */
+
 @Validated
 @RestController
 @RequiredArgsConstructor
@@ -25,8 +23,6 @@ public class ItemRequestController {
 
     @PostMapping
     public @Valid ItemRequest addRequest(@RequestHeader("X-Sharer-User-Id") String ownerId, @Valid @RequestBody ItemRequest request) {
-        System.out.println("addRequest");
-        System.out.println(request);
         if (userService.getUser(Long.parseLong(ownerId)).isPresent()) {
             request.setRequestor(userService.getUser(Long.parseLong(ownerId)).get());
             return service.addRequest(Long.parseLong(ownerId), request);
@@ -36,7 +32,6 @@ public class ItemRequestController {
 
     @GetMapping
     public @Valid List<ItemRequest> getUserRequests(@RequestHeader("X-Sharer-User-Id") String ownerId) {
-        System.out.println("getUserRequests");
         if (userService.getUser(Long.parseLong(ownerId)).isPresent()) {
             return service.getUserRequests(Long.parseLong(ownerId));
         }
@@ -59,11 +54,9 @@ public class ItemRequestController {
 
     @GetMapping("/{requestId}")
     public @Valid ItemRequest getRequest(@RequestHeader("X-Sharer-User-Id") String ownerId, @PathVariable("requestId") long id) {
-        System.out.println("getRequest");
         if (userService.getUser(Long.parseLong(ownerId)).isPresent()) {
             return service.getRequestById(id);
         }
-        System.out.println("error");
         throw new ValidationException("Request is not exist.");
     }
 

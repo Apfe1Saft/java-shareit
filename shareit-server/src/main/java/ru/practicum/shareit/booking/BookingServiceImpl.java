@@ -90,9 +90,6 @@ public class BookingServiceImpl implements BookingService {
 
     @Override//I&T
     public List<Booking> showOwnerBookings(long userId, State state) {
-        System.out.println(showAll(state).stream()
-                .filter(x -> x.getItem().getOwner()
-                        .getId() == userId).collect(Collectors.toList()));
         List<Booking> listOfBooking = showAll(state).stream()
                 .filter(x -> x.getItem().getOwner()
                         .getId() == userId).collect(Collectors.toList());
@@ -134,13 +131,11 @@ public class BookingServiceImpl implements BookingService {
 
     @Override//I&T
     public List<Booking> showAll(State state, int firstPage, int size) {
-        System.out.println(state + " " + firstPage + " " + size);
-        System.out.println("showAll:" + repository.findAll());
         Pageable uPage = PageRequest.of(firstPage, size, Sort.by("id"));
         switch (state) {
             case ALL:
-                //System.out.println("BINGO");
-                // System.out.println(repository.findAll(PageRequest.of(firstPage, size, Sort.by("id").descending())).stream().collect(Collectors.toList()));
+                //"BINGO");
+                // repository.findAll(PageRequest.of(firstPage, size, Sort.by("id").descending())).stream().collect(Collectors.toList()));
                 return repository.findAll(PageRequest.of(firstPage, size, Sort.by("id").descending())).stream().collect(Collectors.toList());
             case PAST:
                 return repository.findAll(uPage).stream()

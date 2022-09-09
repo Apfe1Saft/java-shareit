@@ -13,9 +13,7 @@ import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.List;
 
-/**
- * // TODO .
- */
+
 @Data
 @Entity
 @Table(name = "requests")

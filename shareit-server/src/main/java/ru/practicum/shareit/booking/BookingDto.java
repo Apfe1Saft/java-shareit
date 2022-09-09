@@ -7,9 +7,7 @@ import lombok.Setter;
 
 import java.time.LocalDateTime;
 
-/**
- * // TODO .
- */
+
 @Data
 @Getter
 @Setter

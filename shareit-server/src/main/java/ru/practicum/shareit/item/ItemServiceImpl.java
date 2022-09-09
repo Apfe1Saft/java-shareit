@@ -86,7 +86,6 @@ public class ItemServiceImpl implements ItemService {
                 answer.setNextBooking(nextBooking);
             }
             if (getComment(itemId) != null) {
-                System.out.println("SOOOO");
                 List<CommentDto> commentDto = answer.getComments();
                 Comment comment = getComment(itemId);
                 commentDto.add(CommentMapper.toCommentDto(comment));

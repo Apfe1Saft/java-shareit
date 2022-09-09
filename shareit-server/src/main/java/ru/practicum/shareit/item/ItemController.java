@@ -9,9 +9,7 @@ import ru.practicum.shareit.exception.WrongDataException;
 import javax.validation.Valid;
 import java.util.List;
 
-/**
- * // TODO .
- */
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/items")
@@ -22,7 +20,6 @@ public class ItemController {
     @PostMapping
     public @Valid ItemDto create(@RequestHeader("X-Sharer-User-Id") String ownerId,
                                  @Valid @RequestBody final ItemDto itemDto) {
-        System.out.println(itemDto);
         if (itemDto.getName() == null) throw new NotFoundException("");
         if (itemDto.getName().equals("") || itemDto.getDescription() == null) throw new WrongDataException("");
         return itemService.addItem(itemDto, Long.parseLong(ownerId));
@@ -46,11 +43,13 @@ public class ItemController {
     public @Valid ItemDto update(@PathVariable("itemId") long itemId,
                                  @RequestHeader("X-Sharer-User-Id") String ownerId,
                                  @Valid @RequestBody final ItemDto itemDto) {
+        System.out.println("Hi");
         return itemService.updateItem(itemDto, Long.parseLong(ownerId), itemId);
     }
 
     @GetMapping("/{id}")
     public ItemDto getItemDtoById(@PathVariable("id") long id, @RequestHeader("X-Sharer-User-Id") String userId) {
+
         if (itemService.getItemDtoById(id, Long.parseLong(userId)) != null) {
             return itemService.getItemDtoById(id, Long.parseLong(userId));
         }
