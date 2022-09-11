@@ -57,7 +57,7 @@ public class BookingController {
         try {
             newState = State.valueOf(state);
         } catch (IllegalArgumentException e) {
-            throw new ValidationException("");
+            throw new ValidationException("Unknown state: UNSUPPORTED_STATUS");
         }
         if (userId == null) {
             throw new NullParamException("");
@@ -75,7 +75,7 @@ public class BookingController {
         try {
             newState = State.valueOf(state);
         } catch (IllegalArgumentException e) {
-            throw new ValidationException("");
+            throw new ValidationException("Unknown state: UNSUPPORTED_STATUS");
         }
         if (userId == null) {
             throw new NullParamException("");

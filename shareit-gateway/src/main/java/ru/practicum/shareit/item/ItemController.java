@@ -54,6 +54,8 @@ public class ItemController {
         if (userId == null) {
             throw new NullParamException("");
         } else {
+            System.out.println("Gateway: getItemDtiById - "+itemClient.getItemDtoById(userId,itemId));
+            log.debug("Gateway: getItemDtiById - "+itemClient.getItemDtoById(userId,itemId));
             return itemClient.getItemDtoById(userId, itemId);
         }
     }
