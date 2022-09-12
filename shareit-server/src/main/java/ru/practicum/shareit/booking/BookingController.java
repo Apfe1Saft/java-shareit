@@ -10,7 +10,6 @@ import ru.practicum.shareit.item.ItemService;
 import ru.practicum.shareit.user.UserService;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -28,7 +27,7 @@ public class BookingController {
     private final ItemService itemService;
 
     @PostMapping
-    public @Valid BookingDto create(@Valid @RequestBody final BookingDto bookingDto,
+    public  BookingDto create( @RequestBody final BookingDto bookingDto,
                                     @RequestHeader("X-Sharer-User-Id") String userId) {
         return bookingService.createBooking(bookingDto, Long.parseLong(userId));
     }
@@ -43,7 +42,7 @@ public class BookingController {
     }
 
     @GetMapping(value = "/{bookingId:[0-9]+}")
-    public @Valid BookingDto getBooking(@RequestHeader("X-Sharer-User-Id") String userId, @PathVariable("bookingId") long bookingId) {
+    public  BookingDto getBooking(@RequestHeader("X-Sharer-User-Id") String userId, @PathVariable("bookingId") long bookingId) {
         if (!bookingService.isBookingExist(bookingId)) {
             throw new NotFoundException("Booking is not exist.");
         }
@@ -55,7 +54,7 @@ public class BookingController {
     }
 
     @GetMapping(value = "/owner")
-    public @Valid List<Booking> getOwnerBookings(@RequestHeader("X-Sharer-User-Id") String userId,
+    public  List<Booking> getOwnerBookings(@RequestHeader("X-Sharer-User-Id") String userId,
                                                  @RequestParam(name = "state", defaultValue = "ALL", required = false) String state,
                                                  @RequestParam(name = "from", defaultValue = "") String from,
                                                  @RequestParam(name = "size", defaultValue = "") String size) {

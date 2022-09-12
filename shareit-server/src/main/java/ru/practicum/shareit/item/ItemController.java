@@ -6,7 +6,6 @@ import ru.practicum.shareit.comment.CommentDto;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.exception.WrongDataException;
 
-import javax.validation.Valid;
 import java.util.List;
 
 
@@ -18,15 +17,15 @@ public class ItemController {
     private final ItemService itemService;
 
     @PostMapping
-    public @Valid ItemDto create(@RequestHeader("X-Sharer-User-Id") String ownerId,
-                                 @Valid @RequestBody final ItemDto itemDto) {
+    public  ItemDto create(@RequestHeader("X-Sharer-User-Id") String ownerId,
+                                  @RequestBody final ItemDto itemDto) {
         if (itemDto.getName() == null) throw new NotFoundException("");
         if (itemDto.getName().equals("") || itemDto.getDescription() == null) throw new WrongDataException("");
         return itemService.addItem(itemDto, Long.parseLong(ownerId));
     }
 
     @GetMapping
-    public @Valid List<?> show(@RequestHeader("X-Sharer-User-Id") String ownerId,
+    public  List<?> show(@RequestHeader("X-Sharer-User-Id") String ownerId,
                                @RequestParam(name = "from", defaultValue = "") String from,
                                @RequestParam(name = "size", defaultValue = "") String size) {
         if (!size.equals("")) {
@@ -40,9 +39,9 @@ public class ItemController {
     }
 
     @PatchMapping("/{itemId}")
-    public @Valid ItemDto update(@PathVariable("itemId") long itemId,
+    public  ItemDto update(@PathVariable("itemId") long itemId,
                                  @RequestHeader("X-Sharer-User-Id") String ownerId,
-                                 @Valid @RequestBody final ItemDto itemDto) {
+                                  @RequestBody final ItemDto itemDto) {
         System.out.println("Hi");
         return itemService.updateItem(itemDto, Long.parseLong(ownerId), itemId);
     }
@@ -67,7 +66,7 @@ public class ItemController {
     }
 
     @PostMapping("/{itemId}/comment")
-    public CommentDto addComment(@PathVariable("itemId") long itemId, @Valid @RequestBody CommentDto commentDto,
+    public CommentDto addComment(@PathVariable("itemId") long itemId,  @RequestBody CommentDto commentDto,
                                  @RequestHeader("X-Sharer-User-Id") String userId) {
         if (commentDto.getText().equals("")) throw new WrongDataException("text is empty.");
         return itemService.addComment(commentDto, itemId, Long.parseLong(userId));

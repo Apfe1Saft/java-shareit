@@ -2,17 +2,15 @@ package ru.practicum.shareit.user;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.exception.NullParamException;
 import ru.practicum.shareit.exception.WrongDataException;
 
-import javax.validation.Valid;
 import java.util.List;
 
 
-@Validated
+
 @RestController
 @RequestMapping(path = "/users")
 @Slf4j
@@ -27,7 +25,7 @@ public class UserController {
     }
 
     @PostMapping
-    public @Valid User create(@Valid @RequestBody final User user) {
+    public  User create( @RequestBody final User user) {
         if (user.getEmail() == null) throw new WrongDataException("");
         userChecker(user);
         userService.addUser(user);
@@ -35,12 +33,12 @@ public class UserController {
     }
 
     @PutMapping
-    public @Valid User put(@Valid @RequestBody final UserDto user) {
+    public  User put( @RequestBody final UserDto user) {
         return userService.update(user);
     }
 
     @PatchMapping("/{id}")
-    public @Valid User update(@PathVariable("id") int id, @Valid @RequestBody final UserDto user) {
+    public  User update(@PathVariable("id") int id,  @RequestBody final UserDto user) {
         user.setId(id);
         return userService.update(user);
     }

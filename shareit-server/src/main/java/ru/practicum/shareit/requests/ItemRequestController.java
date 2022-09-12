@@ -2,16 +2,14 @@ package ru.practicum.shareit.requests;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.exception.ValidationException;
 import ru.practicum.shareit.user.UserService;
 
-import javax.validation.Valid;
 import java.util.List;
 
 
-@Validated
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = "/requests")
@@ -22,7 +20,7 @@ public class ItemRequestController {
     private final UserService userService;
 
     @PostMapping
-    public @Valid ItemRequest addRequest(@RequestHeader("X-Sharer-User-Id") String ownerId, @Valid @RequestBody ItemRequest request) {
+    public  ItemRequest addRequest(@RequestHeader("X-Sharer-User-Id") String ownerId,  @RequestBody ItemRequest request) {
         if (userService.getUser(Long.parseLong(ownerId)).isPresent()) {
             request.setRequestor(userService.getUser(Long.parseLong(ownerId)).get());
             return service.addRequest(Long.parseLong(ownerId), request);
@@ -31,7 +29,7 @@ public class ItemRequestController {
     }
 
     @GetMapping
-    public @Valid List<ItemRequest> getUserRequests(@RequestHeader("X-Sharer-User-Id") String ownerId) {
+    public  List<ItemRequest> getUserRequests(@RequestHeader("X-Sharer-User-Id") String ownerId) {
         if (userService.getUser(Long.parseLong(ownerId)).isPresent()) {
             return service.getUserRequests(Long.parseLong(ownerId));
         }
@@ -39,7 +37,7 @@ public class ItemRequestController {
     }
 
     @GetMapping("/all")
-    public @Valid List<ItemRequest> showRequests(@RequestHeader("X-Sharer-User-Id") String ownerId,
+    public  List<ItemRequest> showRequests(@RequestHeader("X-Sharer-User-Id") String ownerId,
                                                  @RequestParam(name = "from", defaultValue = "") String from,
                                                  @RequestParam(name = "size", defaultValue = "") String size) {
         if (userService.getUser(Long.parseLong(ownerId)).isPresent()) {
@@ -53,7 +51,7 @@ public class ItemRequestController {
     }
 
     @GetMapping("/{requestId}")
-    public @Valid ItemRequest getRequest(@RequestHeader("X-Sharer-User-Id") String ownerId, @PathVariable("requestId") long id) {
+    public  ItemRequest getRequest(@RequestHeader("X-Sharer-User-Id") String ownerId, @PathVariable("requestId") long id) {
         if (userService.getUser(Long.parseLong(ownerId)).isPresent()) {
             return service.getRequestById(id);
         }
